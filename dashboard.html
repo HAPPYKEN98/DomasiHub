@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Command Center | Domasi Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230066FF'/><stop offset='100%' stop-color='%2300D4FF'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230F172A'/><path d='M 12 6 C 22 6 26 11 26 16 C 26 21 22 26 12 26 L 7 26 L 7 6 Z' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='16' x2='18' y2='16' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/><circle cx='18' cy='16' r='2.5' fill='%2300D4FF'/></svg>" />
+    <style>
+        /* Modern Emerald Dashboard Specific Styling */
+        :root {
+            --dashboard-bg-light: #f0fdf4;
+            --dashboard-card-light: #ffffff;
+            --dashboard-text-light: #064e3b;
+            --dashboard-border-light: rgba(16, 185, 129, 0.2);
+            --dashboard-accent: #10b981;
+            --dashboard-accent-dark: #059669;
+            --dashboard-glow: rgba(16, 185, 129, 0.25);
+        }
+
+        body.dark-theme {
+            --dashboard-bg-dark: #022c22;
+            --dashboard-card-dark: #064e3b;
+            --dashboard-text-dark: #ecfdf5;
+            --dashboard-border-dark: rgba(52, 211, 153, 0.25);
+        }
+
+        body {
+            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+            color: #ecfdf5;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        body:not(.dark-theme) {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            color: #064e3b;
+        }
+
+        /* Glassmorphism Header */
+        .admin-header {
+            background: rgba(6, 78, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--dashboard-border-light);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        body:not(.dark-theme) .admin-header {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Animations */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 28px rgba(16, 185, 129, 0.6); }
+        }
+
+        .animated-card {
+            animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 16px;
+            padding: 1.25rem;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body:not(.dark-theme) .stat-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            animation: pulseGlow 2s infinite;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #34d399;
+            margin-top: 0.2rem;
+        }
+
+        body:not(.dark-theme) .stat-value {
+            color: #059669;
+        }
+
+        /* Filter Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: inherit;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: #10b981;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Admin Table Styling */
+        .admin-table-wrapper {
+            background: rgba(2, 44, 34, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            overflow-x: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        body:not(.dark-theme) .admin-table-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1.1rem;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.15);
+        }
+
+        th {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        body:not(.dark-theme) th {
+            color: #064e3b;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        tr {
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        tr:hover {
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        /* Badges & Actions */
+        .badge {
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge-marketplace { background: #0284c7; color: white; }
+        .badge-printing { background: #9333ea; color: white; }
+        .badge-accommodation { background: #059669; color: white; }
+        .badge-academics { background: #d97706; color: white; }
+
+        .uploader-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        body:not(.dark-theme) .uploader-tag {
+            color: #047857;
+        }
+
+        .action-btn {
+            padding: 0.45rem 0.9rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-right: 0.25rem;
+        }
+
+        .btn-edit { background: #f59e0b; color: #000; }
+        .btn-delete { background: #ef4444; color: #fff; }
+        .btn-logout { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="admin-header">
+        <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="index.html" class="logo-link">
+                <img src="logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
+            </a>
+            <span style="font-weight: 800; font-size: 1.1rem; color: #10b981;">ADMIN COMMAND CENTER</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="adminUser" class="uploader-tag">🛡️ Authenticating...</span>
+
+            <!-- Sun/Moon Theme Switch Pill -->
+            <div class="theme-switch-wrapper">
+                <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+                    <span class="toggle-track">
+                        <span class="toggle-thumb">
+                            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"/>
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                            </svg>
+                            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </span>
+                    </span>
+                </button>
+            </div>
+
+            <button class="action-btn btn-logout" onclick="logout()">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="admin-container" style="max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem;">
+        
+        <!-- Live Performance Stat Cards -->
+        <div class="stats-grid">
+            <div class="stat-card animated-card" style="animation-delay: 0.05s;">
+                <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Total Portal Uploads</div>
+                <div id="statTotal" class="stat-value">0</div>
+            </div>
+            <div class="stat-card animated-card" style="animation-delay: 0.1s;">
+                <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Marketplace Goods</div>
+                <div id="statMarket" class="stat-value">0</div>
+            </div>
+            <div class="stat-card animated-card" style="animation-delay: 0.15s;">
+                <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Academic Documents</div>
+                <div id="statAcademic" class="stat-value">0</div>
+            </div>
+            <div class="stat-card animated-card" style="animation-delay: 0.2s;">
+                <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Printers & Lodgings</div>
+                <div id="statServices" class="stat-value">0</div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="filterDashboard('all', this)">🌐 All Uploads</button>
+                <button class="tab-btn" onclick="filterDashboard('marketplace', this)">🛒 Marketplace</button>
+                <button class="tab-btn" onclick="filterDashboard('academics', this)">📚 Academic Vault</button>
+                <button class="tab-btn" onclick="filterDashboard('printing', this)">🖨️ Print Hub</button>
+                <button class="tab-btn" onclick="filterDashboard('accommodation', this)">🏠 Hostels</button>
+            </div>
+
+            <button class="action-btn btn-edit" style="padding: 0.6rem 1.2rem; border-radius: 20px;" onclick="loadAdminDashboard()">🔄 Sync Live Data</button>
+        </div>
+
+        <!-- Animated Data Table -->
+        <div class="admin-table-wrapper animated-card" style="animation-delay: 0.25s;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posted / Shared By</th>
+                        <th>Category</th>
+                        <th>Title / Document Name</th>
+                        <th>Details / Price</th>
+                        <th>Contact / Info</th>
+                        <th>Moderation Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="listingsTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 3rem;">Fetching combined database uploads...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="theme.js"></script>
+    <script>
+        let rawListings = [];
+        let rawAcademics = [];
+        let currentFilter = 'all';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAdminAccess();
+        });
+
+        async function checkAdminAccess() {
+            let currentUser = (localStorage.getItem('adminUsername') || '').toLowerCase().trim();
+            let isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+
+            if (!isLoggedIn) {
+                const inputUser = prompt("Admin Username:");
+                if (!inputUser) { window.location.href = "index.html"; return; }
+
+                const inputPass = prompt("Admin Password:");
+                if (!inputPass) { window.location.href = "index.html"; return; }
+
+                try {
+                    const res = await fetch('http://127.0.0.1:3000/api/admin/signin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: inputUser, password: inputPass })
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.status === 'success') {
+                        localStorage.setItem('adminUsername', data.username);
+                        localStorage.setItem('isAdminLoggedIn', 'true');
+                        currentUser = data.username;
+                    } else {
+                        alert("Access Denied: " + (data.message || "Invalid Credentials"));
+                        window.location.href = "index.html";
+                        return;
+                    }
+                } catch (err) {
+                    console.error("Auth error:", err);
+                    alert("Error connecting to admin authentication server.");
+                    window.location.href = "index.html";
+                    return;
+                }
+            }
+
+            document.getElementById('adminUser').innerHTML = `👤 Admin: <strong>${currentUser.toUpperCase()}</strong>`;
+            loadAdminDashboard();
+        }
+
+        async function loadAdminDashboard() {
+            const tbody = document.getElementById('listingsTableBody');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2.5rem;">Syncing records...</td></tr>`;
+
+            try {
+                // Fetch General Listings and Academic Repository Records concurrently
+                const [listingsRes, academicsRes] = await Promise.all([
+                    fetch('http://127.0.0.1:3000/api/listings'),
+                    fetch('http://127.0.0.1:3000/api/academics')
+                ]);
+
+                const listingsData = await listingsRes.json();
+                const academicsData = await academicsRes.json();
+
+                rawListings = listingsData.status === 'success' ? listingsData.listings : [];
+                rawAcademics = academicsData.status === 'success' ? academicsData.resources : [];
+
+                // Update Stats Counter Cards
+                const marketCount = rawListings.filter(i => i.category === 'marketplace').length;
+                const serviceCount = rawListings.filter(i => i.category === 'printing' || i.category === 'accommodation').length;
+                const academicCount = rawAcademics.length;
+
+                document.getElementById('statTotal').textContent = rawListings.length + academicCount;
+                document.getElementById('statMarket').textContent = marketCount;
+                document.getElementById('statAcademic').textContent = academicCount;
+                document.getElementById('statServices').textContent = serviceCount;
+
+                renderTable();
+            } catch (err) {
+                console.error("Dashboard fetch error:", err);
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2.5rem;">Error connecting to API server. Ensure backend is active.</td></tr>`;
+            }
+        }
+
+        function filterDashboard(type, btn) {
+            currentFilter = type;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('listingsTableBody');
+            tbody.innerHTML = '';
+
+            let combinedItems = [];
+
+            // Standardize General Listings
+            rawListings.forEach(item => {
+                combinedItems.push({
+                    id: item.id,
+                    posted_by: item.posted_by || 'Anonymous Student',
+                    category: item.category || 'marketplace',
+                    title: item.title,
+                    price_or_details: `${parseFloat(item.price || 0).toLocaleString()} MWK`,
+                    contact: item.contact_number || 'N/A',
+                    isAcademic: false
+                });
+            });
+
+            // Standardize Academic Resources
+            rawAcademics.forEach(item => {
+                combinedItems.push({
+                    id: item.id,
+                    posted_by: item.uploaded_by || 'Anonymous Student',
+                    category: 'academics',
+                    title: `${item.title} ${item.course_code ? '[' + item.course_code.toUpperCase() + ']' : ''}`,
+                    price_or_details: `${item.department} (${item.academic_year || 'Study Material'})`,
+                    contact: `📥 ${item.download_count} Downloads`,
+                    isAcademic: true
+                });
+            });
+
+            // Apply Active Tab Filter
+            if (currentFilter !== 'all') {
+                combinedItems = combinedItems.filter(i => i.category === currentFilter);
+            }
+
+            if (combinedItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2.5rem;">No active records found for this view category.</td></tr>`;
+                return;
+            }
+
+            combinedItems.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "animated-card";
+                tr.style.animationDelay = `${index * 0.03}s`;
+
+                const badgeClass = `badge-${item.category}`;
+
+                tr.innerHTML = `
+                    <td><span class="uploader-tag">👤 ${escapeHTML(item.posted_by)}</span></td>
+                    <td><span class="badge ${badgeClass}">${item.category}</span></td>
+                    <td><strong>${escapeHTML(item.title)}</strong></td>
+                    <td>${escapeHTML(item.price_or_details)}</td>
+                    <td>${escapeHTML(item.contact)}</td>
+                    <td>
+                        ${!item.isAcademic ? `<button class="action-btn btn-edit" onclick="editListing(${item.id})">Edit</button>` : ''}
+                        <button class="action-btn btn-delete" onclick="deleteItem(${item.id}, ${item.isAcademic})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function deleteItem(id, isAcademic) {
+            if (!confirm("Are you sure you want to purge this record from Domasi Hub?")) return;
+
+            const endpoint = isAcademic 
+                ? `http://127.0.0.1:3000/api/academics/${id}`
+                : `http://127.0.0.1:3000/api/listings/${id}`;
+
+            try {
+                const response = await fetch(endpoint, { method: 'DELETE' });
+                if (response.ok) {
+                    loadAdminDashboard();
+                } else {
+                    alert("Delete failed.");
+                }
+            } catch (err) {
+                console.error("Delete request error:", err);
+                alert("Failed to send delete request.");
+            }
+        }
+
+        async function editListing(id) {
+            const newTitle = prompt("Update Item Title:");
+            if (newTitle === null) return;
+
+            const newPrice = prompt("Update Price (MWK):");
+            if (newPrice === null) return;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:3000/api/listings/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: newTitle, price: parseFloat(newPrice) || 0 })
+                });
+
+                if (response.ok) {
+                    loadAdminDashboard();
+                } else {
+                    alert("Update failed.");
+                }
+            } catch (err) {
+                console.error("Update request error:", err);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('adminUsername');
+            window.location.href = "index.html";
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>

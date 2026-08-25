@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Repository | Domasi Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230066FF'/><stop offset='100%' stop-color='%2300D4FF'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230F172A'/><path d='M 12 6 C 22 6 26 11 26 16 C 26 21 22 26 12 26 L 7 26 L 7 6 Z' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='16' x2='18' y2='16' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/><circle cx='18' cy='16' r='2.5' fill='%2300D4FF'/></svg>" />
+</head>
+<body>
+
+    <!-- Header matching index.html structural layout -->
+    <header class="main-header">
+        <div class="logo">
+            <h1>
+                <a href="index.html" class="logo-link" aria-label="Domasi Hub Homepage">
+                    <img src="logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
+                </a>
+            </h1>
+        </div>
+
+        <nav class="main-nav">
+            <!-- Dynamic Auth Links Container -->
+            <div id="authNavContainer" style="display: flex; gap: 0.75rem; align-items: center;">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Modern Sun/Moon Pill Theme Switch -->
+            <div class="theme-switch-wrapper">
+                <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+                    <span class="toggle-track">
+                        <span class="toggle-thumb">
+                            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"/>
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                            </svg>
+                            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </span>
+                    </span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Title & Upload CTA -->
+        <section class="section-title" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+            <div>
+                <h2>📚 Academic Repository</h2>
+                <p>Access past exam papers, course modules, and study notes shared by fellow students.</p>
+            </div>
+            <button id="openUploadModalBtn" class="btn-primary">+ Upload Resource</button>
+        </section>
+
+        <!-- Search Bar matching .hero-search-box styling -->
+        <section style="margin-bottom: 2rem;">
+            <div class="hero-search-box" style="margin: 0; max-width: 100%;">
+                <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search past papers, notes, or course codes (e.g., HUM 211)..."
+                    aria-label="Search resources"
+                >
+                <select id="departmentFilter" style="width: auto; margin-right: 0.5rem; border: none; background: transparent; cursor: pointer;">
+                    <option value="">All Departments</option>
+                    <option value="Sciences">Sciences</option>
+                    <option value="Humanities">Humanities</option>
+                    <option value="Social Sciences">Social Sciences</option>
+                    <option value="Languages & Communication">Languages & Communication</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Resources Grid matching .services-grid -->
+        <section>
+            <div id="resourcesGrid" class="services-grid">
+                <p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Loading academic resources...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Upload Modal Modal Overlay using .modal-overlay -->
+    <div id="uploadModal" class="modal-overlay">
+        <div class="module-card" style="width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Upload Study Material</h3>
+                <button id="closeModalBtn" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="resourceTitle">Resource Title *</label>
+                    <input type="text" id="resourceTitle" required placeholder="e.g. 2024 End of Year Physics Paper 1">
+                </div>
+
+                <div class="form-group">
+                    <label for="resourceDept">Department *</label>
+                    <select id="resourceDept" required>
+                        <option value="">Select Department</option>
+                        <option value="Sciences">Sciences</option>
+                        <option value="Humanities">Humanities</option>
+                        <option value="Social Sciences">Social Sciences</option>
+                        <option value="Languages & Communication">Languages & Communication</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 140px;">
+                        <label for="resourceYear">Academic Year</label>
+                        <input type="text" id="resourceYear" placeholder="e.g. Year 2">
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 140px;">
+                        <label for="resourceCode">Course Code</label>
+                        <input type="text" id="resourceCode" placeholder="e.g. PHY 210">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="resourceFile">Document File (PDF/Doc) *</label>
+                    <input type="file" id="resourceFile" accept=".pdf,.doc,.docx" required>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="button" id="cancelUploadBtn" class="btn-secondary" style="color: var(--text-core) !important;">Cancel</button>
+                    <button type="submit" class="btn-primary">Upload Resource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer matching index.html structural layout -->
+    <footer class="main-footer">
+        <p>&copy; 2026 Domasi Hub.</p>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="academics.js"></script>
+</body>
+</html>
