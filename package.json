@@ -1,35 +1,20 @@
 {
   "name": "domasi-hub",
-  "version": "1.0.0",
-  "description": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 120\" width=\"100%\" height=\"120\">   <defs>     <linearGradient id=\"hubGradient\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">       <stop offset=\"0%\" stop-color=\"#0066FF\" />       <stop offset=\"100%\" stop-color=\"#00D4FF\" />     </linearGradient>   </defs>   <g transform=\"translate(10, 10)\">     <path d=\"M 40,10 C 75,10 90,30 90,50 C 90,70 75,90 40,90 L 20,90 L 20,10 Z\" fill=\"none\" stroke=\"url(#hubGradient)\" stroke-width=\"8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" />     <path d=\"M 20,50 L 55,50\" fill=\"none\" stroke=\"url(#hubGradient)\" stroke-width=\"8\" stroke-linecap=\"round\" />     <path d=\"M 55,30 L 55,70\" fill=\"none\" stroke=\"url(#hubGradient)\" stroke-width=\"8\" stroke-linecap=\"round\" />     <circle cx=\"55\" cy=\"50\" r=\"7\" fill=\"#00D4FF\" />   </g>   <text x=\"130\" y=\"65\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"42px\" font-weight=\"800\" letter-spacing=\"-0.5px\" fill=\"#ffffff\">Domasi</text>   <text x=\"292\" y=\"65\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"42px\" font-weight=\"300\" letter-spacing=\"0px\" fill=\"url(#hubGradient)\">Hub</text>   <text x=\"132\" y=\"92\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"13px\" font-weight=\"600\" letter-spacing=\"3.5px\" opacity=\"0.7\" fill=\"#ffffff\">CAMPUS UTILITY PLATFORM</text> </svg>",
-  "main": "server.js",
+  "version": "2.0.0",
+  "description": "Domasi Hub - Independent Digital Student Utility Network",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "test": "echo\"Error:no test Specified\" && Exit 1"
+    "dev": "npx serve .",
+    "cap:sync": "npx cap sync",
+    "android": "npx cap open android",
+    "build:android": "cd android && gradlew.bat assembleDebug"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/craigmzumara/domasi-hub.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/craigmzumara/domasi-hub/issues"
-  },
-  "homepage": "https://github.com/craigmzumara/domasi-hub#readme",
   "dependencies": {
     "@capacitor/android": "^8.4.2",
     "@capacitor/cli": "^8.4.2",
     "@capacitor/core": "^8.4.2",
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "pg": "^8.22.0"
+    "@supabase/supabase-js": "^2.57.0"
   },
-  "engines": {
-    "node": ">18.x"
-  },
-  "type": "commonjs"
+  "devDependencies": {},
+  "type": "module"
 }
