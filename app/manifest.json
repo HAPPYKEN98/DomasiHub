@@ -1,0 +1,20 @@
+{
+  "name": "Domasi Hub",
+  "short_name": "Domasi Hub",
+  "start_url": "./home.html",
+  "display": "standalone",
+  "background_color": "#F6F7FB",
+  "theme_color": "#635BFF",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "assets/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

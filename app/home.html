@@ -1,1 +1,166 @@
-
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#635BFF" />
+    <meta
+      name="description"
+      content="Domasi Hub — independent digital student utility network."
+    />
+    <link rel="icon" href="assets/icons/favicon.svg" />
+    <title>Home — Domasi Hub</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <a class="brand" href="home.html"
+          ><span class="brand-logo"
+            ><img
+              src="assets/logo/domasi-hub-logo.svg"
+              alt="Domasi Hub" /></span></a
+        ><button
+          class="icon-btn"
+          onclick="window.toggleTheme()"
+          aria-label="Toggle theme"
+        >
+          <img src="assets/icons/spark.svg" />
+        </button>
+      </header>
+      <main class="main">
+        <section class="hero">
+          <span class="eyebrow">DOMASI STUDENT NETWORK</span>
+          <h1>Your campus,<br /><span>connected.</span></h1>
+          <p>
+            Buy, sell, study, print, find accommodation and discover useful
+            student services in one place.
+          </p>
+        </section>
+        <div class="search">
+          <img src="assets/icons/search.svg" /><input
+            id="globalSearch"
+            placeholder="Search marketplace, housing, notes..."
+          />
+        </div>
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">EXPLORE</span>
+              <h2>What do you need?</h2>
+            </div>
+          </div>
+          <div class="service-grid">
+            <a class="service-card" href="marketplace.html"
+              ><div class="service-icon">
+                <img src="assets/icons/marketplace.svg" />
+              </div>
+              <div>
+                <h3>Marketplace</h3>
+                <p>Buy, sell & trade</p>
+              </div>
+              <span class="arrow"
+                ><img src="assets/icons/arrow-right.svg" /></span></a
+            ><a class="service-card" href="accommodation.html"
+              ><div class="service-icon">
+                <img src="assets/icons/housing.svg" />
+              </div>
+              <div>
+                <h3>Accommodation</h3>
+                <p>Find your next place</p>
+              </div>
+              <span class="arrow"
+                ><img src="assets/icons/arrow-right.svg" /></span></a
+            ><a class="service-card" href="academics.html"
+              ><div class="service-icon">
+                <img src="assets/icons/academics.svg" />
+              </div>
+              <div>
+                <h3>Academics</h3>
+                <p>Notes & past papers</p>
+              </div>
+              <span class="arrow"
+                ><img src="assets/icons/arrow-right.svg" /></span></a
+            ><a class="service-card" href="printing.html"
+              ><div class="service-icon">
+                <img src="assets/icons/printing.svg" />
+              </div>
+              <div>
+                <h3>Printing</h3>
+                <p>Print without queues</p>
+              </div>
+              <span class="arrow"
+                ><img src="assets/icons/arrow-right.svg" /></span
+            ></a>
+          </div>
+        </section>
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">QUICK ACTIONS</span>
+              <h2>Get things done</h2>
+            </div>
+          </div>
+          <div class="quick-list">
+            <a class="quick" href="sell.html"
+              ><span class="quick-icon"
+                ><img src="assets/icons/plus.svg" /></span
+              ><span class="quick-body"
+                ><strong>Sell something</strong
+                ><small>List an item on Marketplace</small></span
+              ><img src="assets/icons/arrow-right.svg" width="18" /></a
+            ><a class="quick" href="services.html"
+              ><span class="quick-icon"
+                ><img src="assets/icons/services.svg" /></span
+              ><span class="quick-body"
+                ><strong>Find a student service</strong
+                ><small>Discover useful services around campus</small></span
+              ><img src="assets/icons/arrow-right.svg" width="18" /></a
+            ><a class="quick" href="academics.html"
+              ><span class="quick-icon"
+                ><img src="assets/icons/academics.svg" /></span
+              ><span class="quick-body"
+                ><strong>Find study materials</strong
+                ><small>Access resources shared by students</small></span
+              ><img src="assets/icons/arrow-right.svg" width="18"
+            /></a>
+          </div>
+        </section>
+        <section class="promo">
+          <div>
+            <span class="eyebrow" style="color: #fff">DOMASI HUB APP</span>
+            <h2>Everything you need,<br />in one place.</h2>
+            <p>
+              Built mobile-first for fast campus access, low data use and easy
+              sharing.
+            </p>
+            <a class="primary" href="signin.html">Get started</a>
+          </div>
+          <div class="promo-symbol"><img src="assets/icons/spark.svg" /></div>
+        </section>
+      </main>
+      <nav class="bottom-nav">
+        <a href="home.html"
+          ><img src="assets/icons/home.svg" /><span>Home</span></a
+        ><a href="marketplace.html"
+          ><img src="assets/icons/search.svg" /><span>Explore</span></a
+        ><a class="create" href="sell.html"
+          ><img src="assets/icons/plus.svg" /><span class="sr-only"
+            >Create</span
+          ></a
+        ><a href="notifications.html"
+          ><img src="assets/icons/bell.svg" /><span>Alerts</span></a
+        ><a href="profile.html"
+          ><img src="assets/icons/profile.svg" /><span>Me</span></a
+        >
+      </nav>
+    </div>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

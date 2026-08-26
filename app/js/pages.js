@@ -1,0 +1,3 @@
+import {requireAuth} from './lib/guard.js';import {signOut,profile} from './lib/auth.js';import {initials,escapeHTML} from './lib/security.js';
+const protectedPage=document.body.dataset.auth==='required';if(protectedPage){requireAuth().then(async s=>{if(!s)return;const p=await profile().catch(()=>null);document.querySelectorAll('[data-profile-name]').forEach(x=>x.textContent=p?.full_name||s.user?.email||'Student');document.querySelectorAll('[data-profile-reg]').forEach(x=>x.textContent=p?.reg_number||'');document.querySelectorAll('[data-avatar]').forEach(x=>x.textContent=initials(p?.full_name||s.user?.email));})}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-signout]');if(b)signOut().then(()=>location.href='signin.html').catch(console.error)});

@@ -1,0 +1,3 @@
+export function message(el,text,type='error'){if(!el)return;el.textContent=text;el.className=`form-message show ${type}`;el.setAttribute('role',type==='error'?'alert':'status')}
+export function loading(btn,on,label='Working...'){if(!btn)return;btn.disabled=on;if(on){btn.dataset.label=btn.textContent;btn.textContent=label}else btn.textContent=btn.dataset.label||'Continue'}
+export function theme(){const saved=localStorage.getItem('dh-theme');const mode=saved|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=mode;window.toggleTheme=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('dh-theme',next)}}

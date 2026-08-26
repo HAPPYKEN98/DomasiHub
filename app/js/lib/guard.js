@@ -1,0 +1,1 @@
+import {session} from './auth.js';export async function requireAuth(){const s=await session().catch(()=>null);if(!s){location.href=`signin.html?next=${encodeURIComponent(location.pathname+location.search)}`;return null}return s}

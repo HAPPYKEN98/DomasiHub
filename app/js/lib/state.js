@@ -1,0 +1,1 @@
+const state={user:null,profile:null}; export function setState(p){Object.assign(state,p);window.dispatchEvent(new CustomEvent('dh:state',{detail:{...state}}));return state} export function getState(){return {...state}}

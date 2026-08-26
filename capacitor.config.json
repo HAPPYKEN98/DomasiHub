@@ -1,6 +1,6 @@
 {
-  "appId": "com.domasihub.app",
-  "appName": "Domasi Hub",
-  "webDir": ".",
-  "bundledWebRuntime": false
+  "appId":"com.domasihub.app",
+  "appName":"Domasi Hub",
+  "webDir":"app",
+  "bundledWebRuntime":false
 }

@@ -1,242 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light">
-
-<head>
-
-    <meta charset="UTF-8">
-
+  <head>
+    <meta charset="UTF-8" />
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
-
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#635BFF" />
     <meta
-        name="theme-color"
-        content="#6C5CE7"
-    >
-
+      name="description"
+      content="Domasi Hub — independent digital student utility network."
+    />
+    <link rel="icon" href="assets/icons/favicon.svg" />
     <title>Create Account — Domasi Hub</title>
-
-    <link
-        rel="stylesheet"
-        href="../src/css/theme.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="../src/css/auth.css"
-    >
-
-</head>
-
-
-<body>
-
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
     <main class="auth-page">
-
-        <div class="auth-shell">
-
-            <a
-                href="index.html"
-                class="back-link"
-            >
-                ← Back to Domasi Hub
-            </a>
-
-
-            <div class="auth-brand">
-
-                <div class="auth-logo">
-
-                    <img
-                        src="../assets/logo/domasi-hub-logo.png"
-                        alt="Domasi Hub"
-                    >
-
-                </div>
-
-                <h1>Domasi Hub</h1>
-
-                <p>
-                    Your campus, connected.
-                </p>
-
-            </div>
-
-
-            <section class="auth-card">
-
-                <h2>
-                    Create your account
-                </h2>
-
-                <p>
-                    Join the Domasi student network
-                    and access campus services.
-                </p>
-
-
-                <div
-                    id="formMessage"
-                    class="form-message"
-                    role="alert"
-                ></div>
-
-
-                <form
-                    id="signupForm"
-                    class="auth-form"
-                    novalidate
-                >
-
-
-                    <div class="form-group">
-
-                        <label for="fullName">
-                            Full name
-                        </label>
-
-                        <input
-                            id="fullName"
-                            name="fullName"
-                            class="form-input"
-                            type="text"
-                            placeholder="Enter your full name"
-                            autocomplete="name"
-                            maxlength="100"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="registrationNumber">
-                            Registration number
-                        </label>
-
-                        <input
-                            id="registrationNumber"
-                            name="registrationNumber"
-                            class="form-input"
-                            type="text"
-                            placeholder="e.g. BED/SCI/1234/26"
-                            autocomplete="off"
-                            autocapitalize="characters"
-                            maxlength="30"
-                            required
-                        >
-
-                        <p class="form-hint">
-                            Use your official Domasi College
-                            registration number.
-                        </p>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="whatsappNumber">
-                            WhatsApp number
-                        </label>
-
-                        <input
-                            id="whatsappNumber"
-                            name="whatsappNumber"
-                            class="form-input"
-                            type="tel"
-                            placeholder="e.g. +265..."
-                            autocomplete="tel"
-                            maxlength="20"
-                        >
-
-                        <p class="form-hint">
-                            Used only when you choose to
-                            contact sellers or services.
-                        </p>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <div class="password-wrapper">
-
-                            <input
-                                id="password"
-                                name="password"
-                                class="form-input"
-                                type="password"
-                                placeholder="Create a secure password"
-                                autocomplete="new-password"
-                                minlength="8"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="confirmPassword">
-                            Confirm password
-                        </label>
-
-                        <input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            class="form-input"
-                            type="password"
-                            placeholder="Enter your password again"
-                            autocomplete="new-password"
-                            minlength="8"
-                            required
-                        >
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="auth-submit"
-                        id="signupButton"
-                    >
-                        Create account
-                    </button>
-
-                </form>
-
-
-                <div class="auth-footer">
-
-                    Already have an account?
-
-                    <a href="signin.html">
-                        Sign in
-                    </a>
-
-                </div>
-
-            </section>
-
+      <div class="auth-shell">
+        <a class="back" href="index.html">← Back to Domasi Hub</a>
+        <div class="auth-brand">
+          <div class="auth-logo">
+            <img src="assets/logo/domasi-hub-logo.svg" alt="Domasi Hub" />
+          </div>
+          <h1>Domasi Hub</h1>
+          <p>Your campus, connected.</p>
         </div>
-
+        <section class="auth-card">
+          <h2>Create your account</h2>
+          <p>Join the student network and access campus services.</p>
+          <div id="formMessage" class="form-message"></div>
+          <form id="signupForm" class="auth-form" novalidate>
+            <div class="field">
+              <label for="fullName">Full name</label
+              ><input
+                id="fullName"
+                name="fullName"
+                maxlength="100"
+                autocomplete="name"
+                placeholder="Your full name"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="email">Email address</label
+              ><input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="regNumber">Registration number</label
+              ><input
+                id="regNumber"
+                name="regNumber"
+                autocapitalize="characters"
+                autocomplete="off"
+                maxlength="30"
+                placeholder="BED/SCI/1234/26"
+                required
+              />
+              <p class="hint">
+                Your registration number is checked by the Domasi Hub
+                gatekeeper.
+              </p>
+            </div>
+            <div class="field">
+              <label for="whatsapp">WhatsApp number</label
+              ><input
+                id="whatsapp"
+                name="whatsapp"
+                type="tel"
+                autocomplete="tel"
+                maxlength="20"
+                placeholder="+265..."
+              />
+            </div>
+            <div class="field">
+              <label for="password">Password</label
+              ><input
+                id="password"
+                name="password"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                placeholder="At least 8 characters"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="confirm">Confirm password</label
+              ><input
+                id="confirm"
+                name="confirm"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                placeholder="Repeat your password"
+                required
+              />
+            </div>
+            <button id="signupButton" class="auth-submit" type="submit">
+              Create account
+            </button>
+          </form>
+          <div class="auth-footer">
+            Already registered? <a href="signin.html">Sign in</a>
+          </div>
+        </section>
+      </div>
     </main>
-
-
-    <script
-        type="module"
-        src="../src/js/auth/signup.js"
-    ></script>
-
-</body>
-
+    <script type="module" src="js/signup.js"></script>
+  </body>
 </html>

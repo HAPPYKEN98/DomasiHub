@@ -4,8 +4,8 @@
   "description": "Domasi Hub - Independent Digital Student Utility Network",
   "private": true,
   "scripts": {
-    "dev": "npx serve .",
-    "cap:sync": "npx cap sync",
+    "dev": "npx serve app",
+    "cap:sync": "npx cap sync android",
     "android": "npx cap open android",
     "build:android": "cd android && gradlew.bat assembleDebug"
   },
