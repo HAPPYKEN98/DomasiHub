@@ -1,0 +1,14 @@
+.service-card,
+.quick-list a,
+.primary-button,
+.icon-button,
+.bottom-nav a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(108, 92, 231, .35);
+    outline-offset: 3px;
+}
