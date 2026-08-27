@@ -27,11 +27,27 @@
               src="assets/logo/domasi-hub-logo.svg"
               alt="Domasi Hub" /></span></a
         ><button
-          class="icon-btn"
-          onclick="window.toggleTheme()"
-          aria-label="Toggle theme"
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          aria-label="Switch to dark mode"
+          title="Switch theme"
         >
-          <img src="assets/icons/spark.svg" />
+          <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+
+          <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+          </svg>
         </button>
       </header>
       <main class="main">
@@ -43,12 +59,25 @@
             student services in one place.
           </p>
         </section>
-        <div class="search">
-          <img src="assets/icons/search.svg" /><input
+        <form id="globalSearchForm" class="search" role="search">
+          <img src="assets/icons/search.svg" aria-hidden="true" />
+
+          <input
             id="globalSearch"
+            name="q"
+            type="search"
+            autocomplete="off"
             placeholder="Search marketplace, housing, notes..."
+            aria-label="Search Domasi Hub"
           />
-        </div>
+
+          <button type="submit" class="search-button" aria-label="Search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-4-4"></path>
+            </svg>
+          </button>
+        </form>
         <section class="section">
           <div class="section-head">
             <div>

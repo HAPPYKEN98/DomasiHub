@@ -27,23 +27,74 @@
               src="assets/logo/domasi-hub-logo.svg"
               alt="Domasi Hub" /></span></a
         ><button
-          class="icon-btn"
-          onclick="window.toggleTheme()"
-          aria-label="Toggle theme"
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          aria-label="Switch to dark mode"
+          title="Switch theme"
         >
-          <img src="assets/icons/spark.svg" />
+          <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+
+          <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+          </svg>
         </button>
       </header>
       <main class="main">
         <section class="page-title">
-          <span class="eyebrow">DOMASI HUB</span>
-          <h1>Academics</h1>
-          <p>Study guides, lecture notes and past papers in one place.</p>
+          <span class="eyebrow"> ACADEMIC RESOURCES </span>
+
+          <h1>Study smarter.</h1>
+
+          <p>
+            Find past papers, lecture notes, study guides and course materials
+            shared by students.
+          </p>
         </section>
-        <div class="empty">
-          Academics resources are ready for integration with your Supabase
-          storage table.
-        </div>
+
+        <section class="resource-toolbar">
+          <div class="search resource-search">
+            <img src="assets/icons/search.svg" aria-hidden="true" />
+
+            <input
+              id="academicSearch"
+              type="search"
+              placeholder="Search notes, papers or course codes..."
+            />
+          </div>
+
+          <select id="academicDepartment" class="control">
+            <option value="">All departments</option>
+
+            <option value="Sciences">Sciences</option>
+
+            <option value="Humanities">Humanities</option>
+
+            <option value="Social Sciences">Social Sciences</option>
+
+            <option value="Languages & Communication">
+              Languages & Communication
+            </option>
+          </select>
+
+          <a href="create.html?type=academic" class="btn btn-primary">
+            Upload resource
+          </a>
+        </section>
+
+        <p id="academicStatus" class="muted">Loading resources...</p>
+
+        <section id="academicGrid" class="cards"></section>
       </main>
       <nav class="bottom-nav">
         <a href="home.html"
@@ -62,6 +113,7 @@
       </nav>
     </div>
     <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/pages.js"></script>
+
+    <script type="module" src="js/academics.js"></script>
   </body>
 </html>

@@ -1,67 +1,96 @@
 <!doctype html>
 <html lang="en" data-theme="light">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="theme-color" content="#635BFF" />
-    <meta
-      name="description"
-      content="Domasi Hub — independent digital student utility network."
-    />
+    <meta name="description" content="Domasi Hub — independent digital student utility network." />
     <link rel="icon" href="assets/icons/favicon.svg" />
     <title>Printing Hub — Domasi Hub</title>
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="css/responsive.css" />
     <link rel="manifest" href="manifest.json" />
-  </head>
-  <body data-auth="required">
+</head>
+
+<body data-auth="required">
     <div class="app">
-      <header class="app-header">
-        <a class="brand" href="home.html"
-          ><span class="brand-logo"
+        <header class="app-header">
+            <a class="brand" href="home.html"><span class="brand-logo"
             ><img
               src="assets/logo/domasi-hub-logo.svg"
               alt="Domasi Hub" /></span></a
         ><button
-          class="icon-btn"
-          onclick="window.toggleTheme()"
-          aria-label="Toggle theme"
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          aria-label="Switch to dark mode"
+          title="Switch theme"
         >
-          <img src="assets/icons/spark.svg" />
+          <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+
+          <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+          </svg>
         </button>
       </header>
       <main class="main">
         <section class="page-title">
-          <span class="eyebrow">DOMASI HUB</span>
-          <h1>Printing Hub</h1>
-          <p>Find student print setups and submit print jobs without queues.</p>
+          <span class="eyebrow"> PRINTING HUB </span>
+
+          <h1>Print without the queue.</h1>
+
+          <p>
+            Find student-operated printing stations around Domasi and contact
+            them directly.
+          </p>
         </section>
-        <div class="empty">
-          Printing providers and job submission will appear here once their
-          Supabase tables are connected.
-        </div>
-      </main>
-      <nav class="bottom-nav">
-        <a href="home.html"
-          ><img src="assets/icons/home.svg" /><span>Home</span></a
-        ><a href="marketplace.html"
-          ><img src="assets/icons/search.svg" /><span>Explore</span></a
-        ><a class="create" href="sell.html"
-          ><img src="assets/icons/plus.svg" /><span class="sr-only"
-            >Create</span
+
+        <section class="resource-toolbar">
+          <div class="search resource-search">
+            <img src="assets/icons/search.svg" aria-hidden="true" />
+
+            <input
+              id="printingSearch"
+              type="search"
+              placeholder="Search printing stations or locations..."
+            />
+          </div>
+
+          <a href="create.html?type=printing" class="btn btn-primary">
+            Register station
+          </a>
+            </section>
+
+            <p id="printingStatus" class="muted">Loading printing stations...</p>
+
+            <section id="printingGrid" class="cards"></section>
+            </main>
+
+            <nav class="bottom-nav">
+                <a href="home.html"><img src="assets/icons/home.svg" /><span>Home</span></a>
+                <a href="marketplace.html"><img src="assets/icons/search.svg" /><span>Explore</span></a>
+                <a class="create" href="sell.html"><img src="assets/icons/plus.svg" /><span class="sr-only">Create</span
           ></a
         ><a href="notifications.html"
-          ><img src="assets/icons/bell.svg" /><span>Alerts</span></a
-        ><a href="profile.html"
-          ><img src="assets/icons/profile.svg" /><span>Me</span></a
-        >
-      </nav>
+          ><img src="assets/icons/bell.svg" /><span>Alerts</span></a>
+                <a href="profile.html"><img src="assets/icons/profile.svg" /><span>Me</span></a>
+            </nav>
     </div>
     <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/pages.js"></script>
-  </body>
+
+    <script type="module" src="js/printing.js"></script>
+</body>
+
 </html>

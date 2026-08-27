@@ -303,37 +303,102 @@ export function loading(
 
 
 export function theme() {
+
+    const root =
+        document.documentElement;
+
     const saved =
         localStorage.getItem(
             'dh-theme'
         );
 
-    const mode =
-        saved ||
-        (
-            matchMedia(
-                '(prefers-color-scheme: dark)'
-            ).matches
-                ? 'dark'
-                : 'light'
-        );
+    const preferred =
+        window.matchMedia(
+            '(prefers-color-scheme: dark)'
+        ).matches
+            ? 'dark'
+            : 'light';
 
-    document.documentElement.dataset.theme =
-        mode;
+    const initial =
+        saved || preferred;
 
-    window.toggleTheme = () => {
-        const next =
-            document.documentElement
-                .dataset.theme === 'dark'
-                ? 'light'
-                : 'dark';
+    applyTheme(initial);
 
-        document.documentElement.dataset.theme =
-            next;
+
+    document.addEventListener(
+        'click',
+        event => {
+
+            const toggle =
+                event.target.closest(
+                    '[data-theme-toggle]'
+                );
+
+            if (!toggle) {
+                return;
+            }
+
+            const current =
+                root.dataset.theme ||
+                'light';
+
+            applyTheme(
+                current === 'dark'
+                    ? 'light'
+                    : 'dark'
+            );
+        }
+    );
+
+
+    function applyTheme(mode) {
+
+        root.dataset.theme =
+            mode;
 
         localStorage.setItem(
             'dh-theme',
-            next
+            mode
         );
-    };
+
+        const dark =
+            mode === 'dark';
+
+        document
+            .querySelectorAll(
+                '[data-theme-toggle]'
+            )
+            .forEach(button => {
+
+                button.setAttribute(
+                    'aria-label',
+                    dark
+                        ? 'Switch to light mode'
+                        : 'Switch to dark mode'
+                );
+
+                button.setAttribute(
+                    'title',
+                    dark
+                        ? 'Switch to light mode'
+                        : 'Switch to dark mode'
+                );
+            });
+
+
+        const themeColor =
+            document.querySelector(
+                'meta[name="theme-color"]'
+            );
+
+        if (themeColor) {
+
+            themeColor.setAttribute(
+                'content',
+                dark
+                    ? '#0b0f17'
+                    : '#635BFF'
+            );
+        }
+    }
 }

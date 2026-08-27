@@ -1,40 +1,219 @@
-import {requireAuth} from './lib/guard.js';
-import {supabase} from './lib/supabase.js';
-import {escapeHTML} from './lib/security.js';
-import {schemaHint} from './lib/format.js';
+import { supabase } from "./lib/supabase.js";
 
-const list=document.querySelector('#noticeList');
-const status=document.querySelector('#noticeStatus');
+import { escapeHTML } from "./lib/security.js";
 
-function item(x,kind){
-  const unread=kind==='alert'&&!x.read_at;
-  const href=x.link||'#';
-  return `<a class="card" data-id="${escapeHTML(x.id||'')}" data-kind="${kind}" href="${escapeHTML(href)}"><div class="card-content"><div class="row"><span class="chip">${escapeHTML(kind==='bulletin'?x.notice_type||'Campus':unread?'New':'Alert')}</span><span class="muted">${new Date(x.created_at).toLocaleDateString()}</span></div><h3>${escapeHTML(x.title)}</h3><p class="muted">${escapeHTML(x.body||x.description||'')}</p></div></a>`;
+import { money, param, waLink } from "./lib/format.js";
+
+const grid = document.querySelector("#marketGrid");
+
+const status = document.querySelector("#marketStatus");
+
+const search = document.querySelector("#marketSearch");
+
+const q = param("q");
+
+if (search && q) {
+  search.value = q;
 }
 
-async function load(){
-  if(!list)return;
-  const s=await requireAuth();
-  if(!s)return;
-  status.textContent='Loading alerts...';
-  const [{data:notes,error:nErr},{data:bulletins,error:bErr}]=await Promise.all([
-    supabase.from('notifications').select('*').order('created_at',{ascending:false}).limit(40),
-    supabase.from('bulletins').select('*').order('created_at',{ascending:false}).limit(20)
-  ]);
-  if(nErr||bErr){status.textContent=schemaHint(nErr||bErr);list.innerHTML='';return}
-  const rows=[
-    ...(notes||[]).map(x=>item(x,'alert')),
-    ...(bulletins||[]).map(x=>item(x,'bulletin'))
-  ];
-  if(!rows.length){status.textContent='You have no new notifications.';list.innerHTML='';return}
-  status.textContent=`${rows.length} update${rows.length===1?'':'s'}`;
-  list.innerHTML=rows.join('');
+function card(item) {
+  const images = item.image_urls || [];
+
+  const image = images[0];
+
+  const wa = waLink(
+    item.contact_number,
+    `Hi, I'm interested in "${item.title}" on Domasi Hub.`,
+  );
+
+  const seller = item.profiles?.full_name || "Student";
+
+  return `
+
+        <article class="card">
+
+            ${
+              image
+                ? `
+                        <a
+                            class="card-media"
+                            href="marketplace-detail.html?id=${encodeURIComponent(item.id)}"
+                        >
+                            <img
+                                src="${escapeHTML(image)}"
+                                alt="${escapeHTML(item.title)}"
+                            >
+                        </a>
+                    `
+                : ""
+            }
+
+
+            <div class="card-content">
+
+                <div class="row">
+
+                    <span class="chip">
+                        ${escapeHTML(item.category || "General")}
+                    </span>
+
+                    <span class="price">
+                        ${money(item.price)}
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    ${escapeHTML(item.title)}
+                </h3>
+
+
+                <p class="muted">
+                    ${escapeHTML(item.location_details || "Domasi")}
+                </p>
+
+
+                ${
+                  item.item_condition
+                    ? `
+                            <p class="detail-line">
+                                ${escapeHTML(item.item_condition)}
+                            </p>
+                        `
+                    : ""
+                }
+
+
+                ${
+                  item.description
+                    ? `
+                            <p class="description">
+                                ${escapeHTML(item.description)}
+                            </p>
+                        `
+                    : ""
+                }
+
+
+                <div class="uploader">
+
+                    <span class="avatar">
+                        ${escapeHTML(seller.charAt(0).toUpperCase())}
+                    </span>
+
+                    <span>
+                        Listed by
+                        <strong>
+                            ${escapeHTML(seller)}
+                        </strong>
+                    </span>
+
+                </div>
+
+
+                <div class="actions">
+
+                    <a
+                        class="btn btn-secondary"
+                        href="marketplace-detail.html?id=${encodeURIComponent(item.id)}"
+                    >
+                        View details
+                    </a>
+
+                    ${
+                      wa
+                        ? `
+                                <a
+                                    class="btn btn-primary"
+                                    href="${escapeHTML(wa)}"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    WhatsApp
+                                </a>
+                            `
+                        : ""
+                    }
+
+                </div>
+
+            </div>
+
+        </article>
+    `;
 }
 
-list?.addEventListener('click',async e=>{
-  const a=e.target.closest('a[data-kind="alert"][data-id]');
-  if(!a?.dataset.id)return;
-  await supabase.from('notifications').update({read_at:new Date().toISOString()}).eq('id',a.dataset.id);
+async function load() {
+  status.textContent = "Loading listings...";
+
+  let query = supabase
+    .from("listings")
+    .select(
+      `
+                *,
+                profiles:posted_by (
+                    full_name,
+                    reg_number
+                )
+            `,
+    )
+    .eq("status", "active")
+    .order("created_at", {
+      ascending: false,
+    })
+    .limit(48);
+
+  const term = search?.value
+    ?.trim()
+    .replace(/[%(),]/g, "")
+    .slice(0, 80);
+
+  if (term) {
+    query = query.or(
+      `title.ilike.%${term}%,category.ilike.%${term}%,location_details.ilike.%${term}%,description.ilike.%${term}%`,
+    );
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(error);
+
+    status.textContent = "Unable to load marketplace listings.";
+
+    grid.innerHTML = "";
+
+    return;
+  }
+
+  if (!data?.length) {
+    status.textContent = term
+      ? "No listings match your search."
+      : "No listings yet. Be the first to post something.";
+
+    grid.innerHTML = `
+            <div class="empty">
+                ${
+                  term
+                    ? "Try another search."
+                    : "There are no active listings yet."
+                }
+            </div>
+        `;
+
+    return;
+  }
+
+  status.textContent = `${data.length} listing${data.length === 1 ? "" : "s"}`;
+
+  grid.innerHTML = data.map(card).join("");
+}
+
+search?.addEventListener("input", () => {
+  clearTimeout(search._timer);
+
+  search._timer = setTimeout(load, 220);
 });
 
 load();
