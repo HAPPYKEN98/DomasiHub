@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "npx serve app",
+    "start": "npm run dev",
     "cap:sync": "npx cap sync android",
     "android": "npx cap open android",
     "build:android": "cd android && gradlew.bat assembleDebug"
