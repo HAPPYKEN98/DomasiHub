@@ -1,64 +1,99 @@
 import { supabase } from "./supabase.js";
 
-const BUCKET = "hub-public";
+const PUBLIC_BUCKET = "hub-public";
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function safeName(file) {
-  return String(file?.name || "file")
+  return String(file?.name || "image")
     .replace(/[^\w.\-]+/g, "_")
     .slice(-100);
 }
 
-function validateFile(file) {
+function validateImage(file) {
   if (!file || !file.size) {
-    throw new Error("Please choose a file.");
+    throw new Error("Please choose an image.");
   }
 
-  const maxSize = 10 * 1024 * 1024;
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    throw new Error(
+      `"${file.name}" is not a supported image. Use JPG, PNG or WEBP.`,
+    );
+  }
 
-  if (file.size > maxSize) {
-    throw new Error("File is too large. Maximum size is 10MB.");
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error(`"${file.name}" is too large. Maximum image size is 10MB.`);
   }
 }
 
-export async function uploadPublic(file, folder) {
-  validateFile(file);
-
+async function currentUser() {
   const {
     data: { user },
-    error: userError,
+    error,
   } = await supabase.auth.getUser();
 
-  if (userError) throw userError;
+  if (error) throw error;
 
   if (!user) {
-    throw new Error("Please sign in first.");
+    throw new Error("Please sign in before uploading files.");
   }
+
+  return user;
+}
+
+/**
+ * Upload one public image.
+ *
+ * Returns:
+ * {
+ *   path,
+ *   publicUrl,
+ *   fileName,
+ *   mimeType,
+ *   fileSize
+ * }
+ */
+export async function uploadPublic(file, folder = "general") {
+  validateImage(file);
+
+  const user = await currentUser();
 
   const path =
     `${user.id}/${folder}/` + `${crypto.randomUUID()}-${safeName(file)}`;
 
-  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
-    upsert: false,
-    cacheControl: "3600",
-    contentType: file.type || undefined,
-  });
+  const { error } = await supabase.storage
+    .from(PUBLIC_BUCKET)
+    .upload(path, file, {
+      upsert: false,
+      cacheControl: "3600",
+      contentType: file.type,
+    });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   const {
     data: { publicUrl },
-  } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  } = supabase.storage.from(PUBLIC_BUCKET).getPublicUrl(path);
 
   return {
     path,
     publicUrl,
     fileName: file.name,
-    mimeType: file.type || null,
+    mimeType: file.type,
     fileSize: file.size,
   };
 }
 
-export async function uploadMultiple(files, module, recordId, maximum = 3) {
+/**
+ * Upload up to three images.
+ *
+ * Returns an array of public URL strings.
+ */
+export async function uploadPublicMany(files, folder = "general", maximum = 3) {
   const selected = Array.from(files || [])
     .filter((file) => file && file.size)
     .slice(0, maximum);
@@ -71,102 +106,74 @@ export async function uploadMultiple(files, module, recordId, maximum = 3) {
     throw new Error(`You can upload a maximum of ${maximum} images.`);
   }
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const uploaded = [];
 
-  if (userError) throw userError;
+  try {
+    for (const file of selected) {
+      const result = await uploadPublic(file, folder);
 
-  if (!user) {
-    throw new Error("Please sign in first.");
-  }
-
-  const results = [];
-
-  for (let index = 0; index < selected.length; index++) {
-    const file = selected[index];
-
-    validateFile(file);
-
-    if (!file.type.startsWith("image/")) {
-      throw new Error(`"${file.name}" is not an image.`);
+      uploaded.push(result);
     }
 
-    const uploaded = await uploadPublic(file, module);
+    return uploaded.map((item) => item.publicUrl);
+  } catch (error) {
+    /*
+     * Roll back files already uploaded if a later upload fails.
+     */
+    const paths = uploaded.map((item) => item.path);
 
-    const { data, error } = await supabase
-      .from("media_assets")
-      .insert({
-        owner_id: user.id,
-        module,
-        record_id: recordId,
-        storage_path: uploaded.path,
-        public_url: uploaded.publicUrl,
-        file_name: uploaded.fileName,
-        mime_type: uploaded.mimeType,
-        file_size: uploaded.fileSize,
-        sort_order: index,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      // Remove uploaded file if DB registration fails.
-      await supabase.storage.from(BUCKET).remove([uploaded.path]);
-
-      throw error;
+    if (paths.length) {
+      await supabase.storage
+        .from(PUBLIC_BUCKET)
+        .remove(paths)
+        .catch(() => {});
     }
 
-    results.push(data);
+    throw error;
   }
-
-  return results;
 }
 
-export async function getMedia(module, recordId) {
-  const { data, error } = await supabase
-    .from("media_assets")
-    .select("*")
-    .eq("module", module)
-    .eq("record_id", recordId)
-    .order("sort_order", {
-      ascending: true,
-    });
+/**
+ * Delete public files belonging to the current user.
+ */
+export async function deletePublicFiles(paths = []) {
+  const user = await currentUser();
 
-  if (error) throw error;
+  const safePaths = Array.from(paths)
+    .filter(Boolean)
+    .filter((path) => String(path).startsWith(`${user.id}/`));
 
-  return data || [];
+  if (!safePaths.length) {
+    return;
+  }
+
+  const { error } = await supabase.storage
+    .from(PUBLIC_BUCKET)
+    .remove(safePaths);
+
+  if (error) {
+    throw error;
+  }
 }
 
-export async function deleteMedia(media) {
-  if (!media?.storage_path) return;
+/**
+ * Convert a public Supabase storage URL back into
+ * its storage path.
+ */
+export function publicUrlToPath(url) {
+  try {
+    const parsed = new URL(url);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const marker = `/storage/v1/object/public/${PUBLIC_BUCKET}/`;
 
-  if (!user) {
-    throw new Error("Please sign in first.");
+    const index = parsed.pathname.indexOf(marker);
+
+    if (index === -1) {
+      return null;
+    }
+
+    return decodeURIComponent(parsed.pathname.slice(index + marker.length));
+  } catch {
+    return null;
   }
-
-  if (media.owner_id !== user.id) {
-    throw new Error("You are not allowed to delete this file.");
-  }
-
-  const { error: storageError } = await supabase.storage
-    .from(BUCKET)
-    .remove([media.storage_path]);
-
-  if (storageError) {
-    console.error("Storage deletion failed:", storageError);
-  }
-
-  const { error } = await supabase
-    .from("media_assets")
-    .delete()
-    .eq("id", media.id)
-    .eq("owner_id", user.id);
-
-  if (error) throw error;
 }
