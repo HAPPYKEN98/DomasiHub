@@ -25,114 +25,22 @@ const department =
 
 
 function card(resource) {
-
-    const image =
-        resource.image_urls?.[0];
-
+    const image = resource.image_urls?.[0];
+    const title = resource.title || 'Academic resource';
     return `
-        <article class="card resource-card">
-
-            ${
-                image
-                    ? `
-                        <div class="card-media">
-                            <img
-                                src="${escapeHTML(image)}"
-                                alt=""
-                            >
-                        </div>
-                    `
-                    : ''
-            }
-
+        <article class="card resource-card listing-card">
+            <a class="card-media ${image ? '' : 'card-media-empty'}" href="marketplace-detail.html?type=academic&id=${encodeURIComponent(resource.id)}" aria-label="Open ${escapeHTML(title)}">
+                ${image ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" loading="lazy">` : '<span>Academic resource</span>'}
+            </a>
             <div class="card-content">
-
-                <div class="row">
-
-                    <span class="chip">
-                        ${escapeHTML(
-                            resource.department
-                        )}
-                    </span>
-
-                    ${
-                        resource.course_code
-                            ? `
-                                <span class="muted">
-                                    ${escapeHTML(
-                                        resource.course_code
-                                    )}
-                                </span>
-                            `
-                            : ''
-                    }
-
-                </div>
-
-
-                <h3>
-                    ${escapeHTML(
-                        resource.title
-                    )}
-                </h3>
-
-
-                <p class="muted">
-                    ${
-                        resource.academic_year
-                            ? escapeHTML(
-                                resource.academic_year
-                              )
-                            : 'Academic resource'
-                    }
-                </p>
-
-
-                <div class="uploader">
-
-                    <span class="avatar">
-                        ${escapeHTML(
-                            (
-                                resource.profiles
-                                    ?.full_name ||
-                                'Student'
-                            )
-                                .charAt(0)
-                                .toUpperCase()
-                        )}
-                    </span>
-
-                    <span>
-                        Uploaded by
-                        <strong>
-                            ${escapeHTML(
-                                resource.profiles
-                                    ?.full_name ||
-                                'Student'
-                            )}
-                        </strong>
-                    </span>
-
-                </div>
-
-
-                <a
-                    class="btn btn-secondary"
-                    href="${escapeHTML(
-                        resource.file_url
-                    )}"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    Open resource
-                </a>
-
+                <div class="row"><span class="chip">${escapeHTML(resource.department || 'Academic')}</span>${resource.course_code ? `<span class="muted">${escapeHTML(resource.course_code)}</span>` : ''}</div>
+                <h3><a href="marketplace-detail.html?type=academic&id=${encodeURIComponent(resource.id)}">${escapeHTML(title)}</a></h3>
+                <p class="muted">${escapeHTML(resource.academic_year || 'Academic resource')}</p>
+                <div class="uploader"><span class="avatar">${escapeHTML((resource.profiles?.full_name || 'Student').charAt(0).toUpperCase())}</span><span>Uploaded by <strong>${escapeHTML(resource.profiles?.full_name || 'Student')}</strong></span></div>
+                <a class="btn btn-secondary" href="marketplace-detail.html?type=academic&id=${encodeURIComponent(resource.id)}">View resource</a>
             </div>
-
-        </article>
-    `;
+        </article>`;
 }
-
 
 async function load() {
 
@@ -262,5 +170,7 @@ department?.addEventListener(
     load
 );
 
+
+document.querySelector(`[data-focus-search="academicSearch"]`)?.addEventListener("click", () => { search?.dispatchEvent(new Event("input", {bubbles:true})); });
 
 load();

@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="css/responsive.css" />
     <link rel="manifest" href="manifest.json" />
   </head>
-  <body data-auth="required">
+  <body>
     <div class="app">
       <header class="app-header">
         <a class="brand" href="home.html"
@@ -70,7 +70,9 @@
               id="housingSearch"
               type="search"
               placeholder="Search location or accommodation..."
-            />
+            /><button type="button" class="search-button" data-focus-search="housingSearch" aria-label="Search accommodation">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            </button>
           </div>
 
           <select id="housingAvailability" class="control">
@@ -93,7 +95,7 @@
           ><img src="assets/icons/home.svg" /><span>Home</span></a
         ><a href="marketplace.html"
           ><img src="assets/icons/search.svg" /><span>Explore</span></a
-        ><a class="create" href="create.html?type=marketplace"
+        ><a class="create" href="create.html"
           ><img src="assets/icons/plus.svg" /><span class="sr-only"
             >Create</span
           ></a

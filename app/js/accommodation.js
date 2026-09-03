@@ -50,18 +50,12 @@ function card(item, profile) {
       ${
         image
           ? `
-            <div class="card-media">
-              <img
-                src="${escapeHTML(image)}"
-                alt="${escapeHTML(item.title)}"
-                loading="lazy"
-              >
-            </div>
+            <a class="card-media" href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}" aria-label="View ${escapeHTML(item.title)}">
+              <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title)}" loading="lazy">
+            </a>
           `
           : `
-            <div class="card-media card-media-empty">
-              <span>No photo</span>
-            </div>
+            <a class="card-media card-media-empty" href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}" aria-label="View ${escapeHTML(item.title)}"><span>No photo</span></a>
           `
       }
 
@@ -80,9 +74,7 @@ function card(item, profile) {
 
         </div>
 
-        <h3>
-          ${escapeHTML(item.title || "Accommodation")}
-        </h3>
+        <h3><a href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}">${escapeHTML(item.title || "Accommodation")}</a></h3>
 
         ${
           item.location_details
@@ -140,6 +132,8 @@ function card(item, profile) {
           </span>
 
         </div>
+
+        <a class="btn btn-secondary" href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}">View accommodation</a>
 
         ${
           wa
@@ -240,5 +234,7 @@ search?.addEventListener("input", () => {
 });
 
 availability?.addEventListener("change", load);
+
+document.querySelector(`[data-focus-search="housingSearch"]`)?.addEventListener("click", () => { search?.dispatchEvent(new Event("input", {bubbles:true})); });
 
 load();

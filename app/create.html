@@ -72,6 +72,38 @@
           </p>
         </section>
 
+        <section id="createPicker" class="create-picker" aria-labelledby="createPickerTitle">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">CHOOSE A SECTION</span>
+              <h2 id="createPickerTitle">What would you like to list?</h2>
+              <p class="muted">Choose where your post belongs. Each section has its own form and fields.</p>
+            </div>
+          </div>
+          <div class="create-choice-grid">
+            <a class="create-choice" href="create.html?type=marketplace">
+              <span class="create-choice-icon"><img src="assets/icons/marketplace.svg" alt="" /></span>
+              <span><strong>Marketplace</strong><small>Sell, buy or trade an item</small></span>
+              <img class="create-choice-arrow" src="assets/icons/arrow-right.svg" alt="" />
+            </a>
+            <a class="create-choice" href="create.html?type=housing">
+              <span class="create-choice-icon"><img src="assets/icons/housing.svg" alt="" /></span>
+              <span><strong>Accommodation</strong><small>List a room, house or place to stay</small></span>
+              <img class="create-choice-arrow" src="assets/icons/arrow-right.svg" alt="" />
+            </a>
+            <a class="create-choice" href="create.html?type=printing">
+              <span class="create-choice-icon"><img src="assets/icons/printing.svg" alt="" /></span>
+              <span><strong>Printing station</strong><small>Register your student printing service</small></span>
+              <img class="create-choice-arrow" src="assets/icons/arrow-right.svg" alt="" />
+            </a>
+            <a class="create-choice" href="create.html?type=academic">
+              <span class="create-choice-icon"><img src="assets/icons/academics.svg" alt="" /></span>
+              <span><strong>Academic resource</strong><small>Share notes, papers or course materials</small></span>
+              <img class="create-choice-arrow" src="assets/icons/arrow-right.svg" alt="" />
+            </a>
+          </div>
+        </section>
+
         <form id="createForm" class="create-form" novalidate>
           <div id="dynamicFields"></div>
 
@@ -126,7 +158,7 @@
           ><img src="assets/icons/home.svg" /><span>Home</span></a
         ><a href="marketplace.html"
           ><img src="assets/icons/search.svg" /><span>Explore</span></a
-        ><a class="create" href="create.html?type=marketplace"
+        ><a class="create" href="create.html"
           ><img src="assets/icons/plus.svg" /><span class="sr-only"
             >Create</span
           ></a

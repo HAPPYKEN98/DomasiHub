@@ -78,6 +78,18 @@
             </svg>
           </button>
         </form>
+        <section id="homeSearchSection" class="section home-search-results" hidden>
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">SEARCH</span>
+              <h2 id="homeSearchTitle">Search results</h2>
+            </div>
+            <button id="clearHomeSearch" type="button" class="btn btn-secondary">Clear</button>
+          </div>
+          <p id="homeSearchStatus" class="muted"></p>
+          <div id="homeSearchGrid" class="cards"></div>
+        </section>
+
         <section class="section">
           <div class="section-head">
             <div>
@@ -137,7 +149,7 @@
             </div>
           </div>
           <div class="quick-list">
-            <a class="quick" href="create.html?type=marketplace"
+            <a class="quick" href="create.html"
               ><span class="quick-icon"
                 ><img src="assets/icons/plus.svg" /></span
               ><span class="quick-body"
@@ -179,7 +191,7 @@
           ><img src="assets/icons/home.svg" /><span>Home</span></a
         ><a href="marketplace.html"
           ><img src="assets/icons/search.svg" /><span>Explore</span></a
-        ><a class="create" href="create.html?type=marketplace"
+        ><a class="create" href="create.html"
           ><img src="assets/icons/plus.svg" /><span class="sr-only"
             >Create</span
           ></a

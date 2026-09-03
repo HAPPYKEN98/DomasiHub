@@ -225,4 +225,6 @@ search?.addEventListener("input", () => {
   search._timer = setTimeout(load, 250);
 });
 
+document.querySelector(`[data-focus-search="marketSearch"]`)?.addEventListener("click", () => { search?.dispatchEvent(new Event("input", {bubbles:true})); });
+
 load();

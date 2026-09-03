@@ -14,7 +14,7 @@
     <link rel="manifest" href="manifest.json" />
 </head>
 
-<body data-auth="required">
+<body>
     <div class="app">
         <header class="app-header">
             <a class="brand" href="home.html"><span class="brand-logo"
@@ -65,7 +65,9 @@
               id="printingSearch"
               type="search"
               placeholder="Search printing stations or locations..."
-            />
+            /><button type="button" class="search-button" data-focus-search="printingSearch" aria-label="Search printing stations">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            </button>
           </div>
 
           <a href="create.html?type=printing" class="btn btn-primary">
@@ -81,7 +83,7 @@
             <nav class="bottom-nav">
                 <a href="home.html"><img src="assets/icons/home.svg" /><span>Home</span></a>
                 <a href="marketplace.html"><img src="assets/icons/search.svg" /><span>Explore</span></a>
-                <a class="create" href="create.html?type=marketplace"><img src="assets/icons/plus.svg" /><span class="sr-only">Create</span
+                <a class="create" href="create.html"><img src="assets/icons/plus.svg" /><span class="sr-only">Create</span
           ></a
         ><a href="notifications.html"
           ><img src="assets/icons/bell.svg" /><span>Alerts</span></a>

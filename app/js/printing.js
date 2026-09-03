@@ -44,13 +44,9 @@ function card(provider, profile) {
       ${
         image
           ? `
-            <div class="card-media">
-              <img
-                src="${escapeHTML(image)}"
-                alt="${escapeHTML(provider.name)}"
-                loading="lazy"
-              >
-            </div>
+            <a class="card-media" href="marketplace-detail.html?type=printing&id=${encodeURIComponent(provider.id)}" aria-label="View ${escapeHTML(provider.name)}">
+              <img src="${escapeHTML(image)}" alt="${escapeHTML(provider.name)}" loading="lazy">
+            </a>
           `
           : `
             <div class="card-media card-media-empty">
@@ -71,9 +67,7 @@ function card(provider, profile) {
 
         </div>
 
-        <h3>
-          ${escapeHTML(provider.name)}
-        </h3>
+        <h3><a href="marketplace-detail.html?type=printing&id=${encodeURIComponent(provider.id)}">${escapeHTML(provider.name)}</a></h3>
 
         ${
           provider.location_details
@@ -109,6 +103,8 @@ function card(provider, profile) {
           </span>
 
         </div>
+
+        <a class="btn btn-secondary" href="marketplace-detail.html?type=printing&id=${encodeURIComponent(provider.id)}">View station</a>
 
         ${
           wa
@@ -202,5 +198,7 @@ search?.addEventListener("input", () => {
 
   search._timer = setTimeout(load, 250);
 });
+
+document.querySelector(`[data-focus-search="printingSearch"]`)?.addEventListener("click", () => { search?.dispatchEvent(new Event("input", {bubbles:true})); });
 
 load();

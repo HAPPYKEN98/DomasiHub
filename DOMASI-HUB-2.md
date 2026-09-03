@@ -14,7 +14,7 @@ New mobile-first frontend foundation for Domasi Hub.
 Signup uses full name, email, Domasi registration number, WhatsApp number and password. Registration number validation is client-side for UX only; authorization and uniqueness must be enforced by PostgreSQL/RLS.
 
 ## Database
-Apply `supabase/schema.sql` in the Supabase SQL Editor before using listings, housing, academics, printing, services or notifications. That file creates tables, RLS, the signup profile trigger, welcome notifications, and Storage buckets `hub-public` / `hub-private`.
+Apply `supabase/schema.sql` in the Supabase SQL Editor before using listings, housing, academics, printing, services or notifications. Then apply `supabase/repair-v2.sql` and `supabase/repair-v3.sql` in order. The repair scripts add multi-image support, edit/delete RLS policies and the safe public profile projection used by listing cards.
 
 ## Run
 `npm install` then `npm run dev`.

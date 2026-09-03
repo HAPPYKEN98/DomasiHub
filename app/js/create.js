@@ -8,7 +8,9 @@ import { escapeHTML } from "./lib/security.js";
 
 const params = new URLSearchParams(location.search);
 
-const type = params.get("type") || "marketplace";
+let type = params.get("type");
+if (type === "accommodation") type = "housing";
+const picker = document.querySelector("#createPicker");
 
 const form = document.querySelector("#createForm");
 
@@ -269,8 +271,19 @@ const configs = {
   },
 };
 
-const config = configs[type] || configs.marketplace;
+const config = type ? configs[type] : null;
 
+if (!config) {
+  if (picker) picker.hidden = false;
+  if (form) form.hidden = true;
+} else {
+  if (picker) picker.hidden = true;
+  if (form) form.hidden = false;
+}
+
+if (!config) {
+  // The picker is the landing state for the global + button.
+} else {
 title.textContent = config.title;
 
 description.textContent = config.description;
@@ -280,6 +293,7 @@ fields.innerHTML = config.fields;
 button.textContent = `Publish ${type === "academic" ? "resource" : "listing"}`;
 
 await requireAuth();
+}
 
 /* =========================================================
    IMAGE SELECTION
@@ -368,7 +382,7 @@ form?.addEventListener("submit", async (event) => {
      * Upload images.
      */
 
-    const imageUrls = await uploadPublicMany(selectedFiles, type, 3);
+    const imageUrls = await uploadPublicMany(selectedFiles, type || "general", 3);
 
     let payload;
 

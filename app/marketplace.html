@@ -61,7 +61,9 @@
             id="marketSearch"
             class="control"
             placeholder="Search listings..."
-          /><a class="btn btn-primary" href="create.html?type=marketplace">Create listing</a>
+          /><button type="button" class="search-button" data-focus-search="marketSearch" aria-label="Search listings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          </button><a class="btn btn-primary" href="create.html">Create listing</a>
         </div>
         <p id="marketStatus" class="muted" style="margin: 16px 0">
           Loading listings...
@@ -73,7 +75,7 @@
           ><img src="assets/icons/home.svg" /><span>Home</span></a
         ><a href="marketplace.html"
           ><img src="assets/icons/search.svg" /><span>Explore</span></a
-        ><a class="create" href="create.html?type=marketplace"
+        ><a class="create" href="create.html"
           ><img src="assets/icons/plus.svg" /><span class="sr-only"
             >Create</span
           ></a
