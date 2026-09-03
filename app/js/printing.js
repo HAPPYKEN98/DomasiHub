@@ -8,104 +8,127 @@ const status = document.querySelector("#printingStatus");
 
 const search = document.querySelector("#printingSearch");
 
-function card(provider) {
-  const image = provider.image_urls?.[0];
+async function loadProfiles(ids) {
+  if (!ids.length) {
+    return new Map();
+  }
+
+  const { data, error } = await supabase
+    .from("public_profiles")
+    .select("id,full_name,avatar_url,verified")
+    .in("id", ids);
+
+  if (error) {
+    console.error(error);
+    return new Map();
+  }
+
+  return new Map((data || []).map((profile) => [profile.id, profile]));
+}
+
+function card(provider, profile) {
+  const images = Array.isArray(provider.image_urls) ? provider.image_urls : [];
+
+  const image = images[0];
+
+  const operator = profile?.full_name || "Domasi student";
 
   const wa = waLink(
     provider.contact_number,
-    `Hi, I found your printing station on Domasi Hub.`,
+    `Hi, I found "${provider.name}" on Domasi Hub and would like to enquire about printing.`,
   );
 
   return `
-        <article class="card">
+    <article class="card listing-card">
 
-            ${
-              image
-                ? `
-                        <div class="card-media">
-                            <img
-                                src="${escapeHTML(image)}"
-                                alt="${escapeHTML(provider.name)}"
-                            >
-                        </div>
-                    `
-                : ""
-            }
-
-
-            <div class="card-content">
-
-                <div class="row">
-
-                    <span class="chip">
-                        ${provider.available ? "Open" : "Unavailable"}
-                    </span>
-
-                </div>
-
-
-                <h3>
-                    ${escapeHTML(provider.name)}
-                </h3>
-
-
-                <p class="muted">
-                    ${escapeHTML(provider.location_details || "Domasi")}
-                </p>
-
-
-                ${
-                  provider.notes
-                    ? `
-                            <p class="description">
-                                ${escapeHTML(provider.notes)}
-                            </p>
-                        `
-                    : ""
-                }
-
-
-                <div class="uploader">
-
-                    <span class="avatar">
-                        ${escapeHTML(
-                          (provider.profiles?.full_name || "Student")
-                            .charAt(0)
-                            .toUpperCase(),
-                        )}
-                    </span>
-
-                    <span>
-                        Operated by
-                        <strong>
-                            ${escapeHTML(
-                              provider.profiles?.full_name || "Student",
-                            )}
-                        </strong>
-                    </span>
-
-                </div>
-
-
-                ${
-                  wa
-                    ? `
-                            <a
-                                class="btn btn-primary"
-                                href="${escapeHTML(wa)}"
-                                target="_blank"
-                                rel="noopener"
-                            >
-                                Contact station
-                            </a>
-                        `
-                    : ""
-                }
-
+      ${
+        image
+          ? `
+            <div class="card-media">
+              <img
+                src="${escapeHTML(image)}"
+                alt="${escapeHTML(provider.name)}"
+                loading="lazy"
+              >
             </div>
+          `
+          : `
+            <div class="card-media card-media-empty">
+              <span>No photo</span>
+            </div>
+          `
+      }
 
-        </article>
-    `;
+      <div class="card-content">
+
+        <div class="row">
+
+          <span class="chip ${
+            provider.available ? "status-positive" : "status-negative"
+          }">
+            ${provider.available ? "Open" : "Unavailable"}
+          </span>
+
+        </div>
+
+        <h3>
+          ${escapeHTML(provider.name)}
+        </h3>
+
+        ${
+          provider.location_details
+            ? `
+              <p class="detail-line">
+                ${escapeHTML(provider.location_details)}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          provider.notes
+            ? `
+              <p class="description listing-description">
+                ${escapeHTML(provider.notes)}
+              </p>
+            `
+            : ""
+        }
+
+        <div class="uploader">
+
+          <span class="avatar">
+            ${escapeHTML(operator.charAt(0).toUpperCase())}
+          </span>
+
+          <span>
+            Operated by
+            <strong>
+              ${escapeHTML(operator)}
+            </strong>
+          </span>
+
+        </div>
+
+        ${
+          wa
+            ? `
+              <a
+                class="btn btn-primary"
+                href="${escapeHTML(wa)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contact station
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+    </article>
+  `;
 }
 
 async function load() {
@@ -113,14 +136,7 @@ async function load() {
 
   let query = supabase
     .from("printing_providers")
-    .select(
-      `
-                *,
-                profiles:owner_id (
-                    full_name
-                )
-            `,
-    )
+    .select("*")
     .order("created_at", {
       ascending: false,
     })
@@ -133,7 +149,11 @@ async function load() {
 
   if (term) {
     query = query.or(
-      `name.ilike.%${term}%,location_details.ilike.%${term}%,notes.ilike.%${term}%`,
+      [
+        `name.ilike.%${term}%`,
+        `location_details.ilike.%${term}%`,
+        `notes.ilike.%${term}%`,
+      ].join(","),
     );
   }
 
@@ -144,6 +164,8 @@ async function load() {
 
     status.textContent = "Unable to load printing stations.";
 
+    grid.innerHTML = "";
+
     return;
   }
 
@@ -151,19 +173,28 @@ async function load() {
     status.textContent = "No printing stations registered yet.";
 
     grid.innerHTML = `
-            <div class="empty">
-                No printing stations are available yet.
-            </div>
-        `;
+      <div class="empty">
+        <strong>No printing stations yet</strong>
+        <p>
+          Be the first student to register a station.
+        </p>
+      </div>
+    `;
 
     return;
   }
+
+  const ids = [...new Set(data.map((item) => item.owner_id).filter(Boolean))];
+
+  const profiles = await loadProfiles(ids);
 
   status.textContent = `${data.length} printing station${
     data.length === 1 ? "" : "s"
   }`;
 
-  grid.innerHTML = data.map(card).join("");
+  grid.innerHTML = data
+    .map((item) => card(item, profiles.get(item.owner_id)))
+    .join("");
 }
 
 search?.addEventListener("input", () => {
