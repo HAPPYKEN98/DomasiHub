@@ -3,6 +3,7 @@
     "dev": "npx serve app"
   },
   "dependencies": {
+    "@capacitor/ios": "^8.5.1",
     "@capacitor/local-notifications": "^8.3.1"
   },
   "devDependencies": {
