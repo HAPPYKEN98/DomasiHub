@@ -157,4 +157,4 @@ To customize the app for a production environment:
 
 ## License
 
-This project does not currently include a license file. If you plan to publish or distribute it, add an appropriate license such as MIT or Apache 2.0.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
