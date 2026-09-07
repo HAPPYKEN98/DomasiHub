@@ -1,0 +1,28 @@
+:root {
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-accent: #f1f5f9;
+  --text-core: #0f172a;
+  --text-secondary: #64748b;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --input-fill: #ffffff;
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary-color: #64748b;
+  --dark-bg: #0f172a;
+  --accent-green: #10b981;
+  --glass-bg: rgba(15, 23, 42, 0.85);
+}
+
+body.dark-theme {
+  --bg-canvas: #090d16;
+  --bg-surface: #1e293b;
+  --bg-panel: #131c2e;
+  --bg-accent: #1e293b;
+  --text-core: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --input-fill: #1e293b;
+  --glass-bg: rgba(9, 13, 22, 0.85);
+}

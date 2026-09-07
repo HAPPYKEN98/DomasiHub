@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "npx serve app"
+  },
+  "dependencies": {
+    "@capacitor/local-notifications": "^8.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1"
+  }
+}

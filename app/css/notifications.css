@@ -1,0 +1,35 @@
+.notifications-main {
+  padding-top: 3rem;
+}
+
+#items article {
+  padding: 0.75rem 0;
+}
+
+#items article:first-child {
+  padding-top: 0;
+}
+
+#items article:last-child {
+  padding-bottom: 0;
+}
+
+#items h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-core);
+  margin-bottom: 0.3rem;
+}
+
+#items p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+#items hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 1rem 0;
+}

@@ -1,0 +1,9 @@
+{
+  "appId": "com.domasihub.app",
+  "appName": "Domasi Hub",
+  "webDir": "app",
+  "server": {
+    "url": "home.html",
+    "cleartext": true
+  }
+}

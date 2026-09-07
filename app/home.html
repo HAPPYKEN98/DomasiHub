@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Domasi Hub | App</title>
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/header-nav.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/academic-window.css" />
+    <link rel="stylesheet" href="css/mobile-nav.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230066FF'/><stop offset='100%' stop-color='%2300D4FF'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230F172A'/><path d='M 12 6 C 22 6 26 11 26 16 C 26 21 22 26 12 26 L 7 26 L 7 6 Z' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='16' x2='18' y2='16' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/><circle cx='18' cy='16' r='2.5' fill='%2300D4FF'/></svg>"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/auth-router.js"></script>
+    <script src="js/auth-signin.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/academics-vault.js"></script>
+    <script src="js/search-listings.js"></script>
+  </head>
+  <body class="is-native-app">
+    <header class="main-header">
+      <div class="logo">
+        <h1>
+          <a
+            href="home.html"
+            class="logo-link"
+            aria-label="Domasi Hub Homepage"
+          >
+            <img
+              src="assets/logo.svg"
+              alt="Domasi Hub Logo"
+              class="header-logo-img"
+            />
+          </a>
+        </h1>
+      </div>
+      <nav class="main-nav">
+        <!-- Hidden on app landing view until triggered by listing/selling action -->
+        <div id="authNavContainer" style="display: none">
+          <!-- Injected contextually via JS only when listing/selling -->
+        </div>
+
+        <!-- Modern Sun/Moon Pill Theme Switch -->
+        <div class="theme-switch-wrapper">
+          <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            aria-label="Toggle Dark Mode"
+          >
+            <span class="toggle-track">
+              <span class="toggle-thumb">
+                <svg
+                  class="sun-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="4" />
+                  <path
+                    d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                  />
+                </svg>
+                <svg
+                  class="moon-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              </span>
+            </span>
+          </button>
+        </div>
+        <div>
+          <span>
+            <a
+              href="notifications.html"
+              class="notification-bell-btn"
+              aria-label="Notifications"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span id="notificationBadge" class="notification-badge">3</span>
+            </a>
+          </span>
+        </div>
+      </nav>
+    </header>
+
+    <main style="padding-bottom: 0.5rem">
+      <section
+        class="section-title"
+        style="text-align: center; margin-bottom: 2rem; margin-top: 1.5rem"
+      >
+        <div class="hero-search-wrapper">
+          <div class="hero-search-box">
+            <svg
+              class="search-input-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="heroSearchInput"
+              placeholder="Search items, past papers, print stations or accommodations..."
+              aria-label="Search listings"
+            />
+            <button
+              id="heroSearchBtn"
+              class="hero-search-btn"
+              aria-label="Search"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>Search</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 3.5rem">
+        <div
+          class="latest-updates-header-box"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+          "
+        >
+          <div style="min-width: 0; flex: 1">
+            <h3
+              id="featuredTitle"
+              style="
+                font-size: clamp(1rem, 3vw, 1.4rem);
+                margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color: #f8fafc;
+              "
+            >
+              Latest Updates
+            </h3>
+          </div>
+          <button
+            id="clearSearchBtn"
+            style="
+              display: none;
+              align-items: center;
+              gap: 4px;
+              font-size: 0.8rem;
+              font-weight: 600;
+              padding: 0.35rem 0.75rem;
+              cursor: pointer;
+              background-color: rgba(255, 255, 255, 0.1);
+              color: #f8fafc;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              border-radius: 6px;
+              white-space: nowrap;
+              flex-shrink: 0;
+            "
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Clear
+          </button>
+        </div>
+
+        <div id="featured-grid" class="featured-grid">
+          <p
+            style="
+              grid-column: 1/-1;
+              text-align: center;
+              padding: 2rem;
+              color: #94a3b8;
+            "
+          >
+            Loading...
+          </p>
+        </div>
+      </section>
+      <section style="margin-bottom: 3.5rem">
+       <div class="latest-updates-header-box" style="margin-bottom: 1.5rem;">
+  <div class="section-title" style="margin-bottom: 0;">
+    <h3 style="color: #f8fafc; font-size: clamp(1.1rem, 3.5vw, 1.6rem); margin-bottom: 0.25rem;">Explore Campus Utilities</h3>
+    <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Select a category to post or search listings.</p>
+  </div>
+</div>
+
+        <div class="services-grid">
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Campus Marketplace</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Buy or sell academic modules, textbooks, electronics, mattresses,
+              and student essentials directly via WhatsApp networks.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Listings: <span id="marketplaceCount">0</span>
+            </p>
+            <a
+              href="marketplace.html"
+              class="btn-primary"
+              style="margin-top: auto"
+              >Explore Market</a
+            >
+          </div>
+
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Student Printing Hub</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Locate operational, student-run print configurations across campus
+              blocks. Upload assignment files instantly for queue printing.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Stations: <span id="printingCount">0</span>
+            </p>
+            <a href="printing.html" class="btn-primary" style="margin-top: auto"
+              >Find Printers</a
+            >
+          </div>
+
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Accommodation Directory</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Browse verified off-campus rentals, student boarding complexes,
+              and bedspaces complete with direct landlord contact links.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Vacancies: <span id="accommodationCount">0</span>
+            </p>
+            <a
+              href="accommodation.html"
+              class="btn-primary"
+              style="margin-top: auto"
+              >View Hostels</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="academic-display-window" style="margin-bottom: 3.5rem">
+        <div class="academic-window-glow"></div>
+        <div class="academic-window-content">
+          <div class="academic-window-badge">
+            <span class="badge-dot"></span> Academic Vault & Resources (<span
+              id="academicUploadsCount"
+              >0</span
+            >
+            Uploads)
+          </div>
+          <h2>Explore Past Papers & Lecture Modules</h2>
+          <p>
+            Access course guides, exam preparation revision packs,
+            end-of-semester papers, and lecture slides shared across
+            departments.
+          </p>
+
+          <div class="academic-feature-tags">
+            <span
+              class="feature-pill"
+              style="cursor: pointer"
+              onclick="filterAcademicVault('Sciences')"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M10 2v7.31M14 9.31V2M8.5 2h7M14 15.5a4.5 4.5 0 1 1-4-4.47"
+                />
+              </svg>
+              Sciences
+            </span>
+            <span
+              class="feature-pill"
+              style="cursor: pointer"
+              onclick="filterAcademicVault('Humanities')"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-15H6.5A2.5 2.5 0 0 0 4 9.5v10z"
+                />
+              </svg>
+              Humanities
+            </span>
+            <span
+              class="feature-pill"
+              style="cursor: pointer"
+              onclick="filterAcademicVault('Social Sciences')"
+            >
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                />
+              </svg>
+              Social Sciences
+            </span>
+            <span
+              class="feature-pill"
+              style="cursor: pointer"
+              onclick="filterAcademicVault('Languages & Communication')"
+            >
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              Languages
+            </span>
+          </div>
+          <div class="academic-cta-group">
+            <a href="academics.html" class="btn-academic-launch">
+              <span>Open Full Academic Repository</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="academic-window-preview" style="width: 360px">
+          <div class="preview-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="preview-title" id="vaultHeaderTitle"
+              >recent_academic_uploads</span
+            >
+          </div>
+          <div class="preview-body" id="academicVaultContainer">
+            <p
+              style="
+                text-align: center;
+                color: #94a3b8;
+                font-size: 0.85rem;
+                padding: 1rem;
+              "
+            >
+              Fetching live academic resources...
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation Bar for Mobile App (5-item layout) -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="home.html" class="nav-home active">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m3 11 9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M9 22v-7h6v7" />
+        </svg>
+        <span>Home</span>
+      </a>
+      <a href="explore.html" class="nav-explore">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon
+            points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"
+          ></polygon>
+        </svg>
+        <span>Explore</span>
+      </a>
+      <a href="portal.html" class="add-nav" aria-label="Add listing">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </a>
+      <a href="services.html" class="nav-services">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        <span>Services</span>
+      </a>
+      <a href="profile.html" class="nav-me">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 21a8 8 0 0 0-16 0" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <span>Me</span>
+      </a>
+    </nav>
+
+    <script src="js/theme.js"></script>
+  </body>
+</html>
