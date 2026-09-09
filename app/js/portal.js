@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       } = await client.auth.getSession();
       if (!session) {
         const isNewUser = localStorage.getItem("is_new_user") !== "false";
-        window.location.href = isNewUser ? "signup.html" : "profile.html";
+        window.location.href = isNewUser ? "signup.html" : "portal.html";
         return;
       }
     } catch (err) {
       console.error("Auth session check failed:", err);
-      window.location.href = "profile.html";
+      window.location.href = "portal.html";
       return;
     }
   }

@@ -1,11 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Check Auth Navigation state & dynamic user session
   setupAuthNav();
-
-  // 2. Fetch initial resources
   fetchResources();
 
-  // 3. Search & Department Filters
   const searchInput = document.getElementById("searchInput");
   const deptFilter = document.getElementById("departmentFilter");
 
@@ -13,24 +9,29 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", debounce(fetchResources, 300));
   if (deptFilter) deptFilter.addEventListener("change", fetchResources);
 
-  // 4. Modal Handlers
   const modal = document.getElementById("uploadModal");
   const openBtn = document.getElementById("openUploadModalBtn");
   const closeBtn = document.getElementById("closeModalBtn");
   const cancelBtn = document.getElementById("cancelUploadBtn");
   const uploadForm = document.getElementById("uploadForm");
 
+  // Strict check on the open button click
   if (openBtn) {
-    openBtn.addEventListener("click", () => {
-      const currentUser = getLoggedInUser();
-      if (!currentUser) {
-        showToast("Please sign in to upload study materials.", "info");
+    openBtn.addEventListener("click", (e) => {
+      const user = getLoggedInUser();
+      if (!user) {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast(
+          "Authentication required. Redirecting to sign in...",
+          "error",
+        );
         setTimeout(() => {
           window.location.href = "signin.html?redirect=academics.html";
-        }, 1200);
+        }, 500);
         return;
       }
-      modal.classList.add("active");
+      if (modal) modal.classList.add("active");
     });
   }
 
@@ -44,11 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 5. Upload Handler
   if (uploadForm) uploadForm.addEventListener("submit", handleUploadSubmit);
 });
 
-// Helper function to reliably get signed-in user data
 function getLoggedInUser() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   if (!isLoggedIn) return null;
@@ -118,7 +117,6 @@ async function fetchResources() {
 
   const client = window.supabaseClient || window.db;
   if (!client) {
-    console.error("Supabase client not initialized.");
     grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Database client not ready.</p>`;
     return;
   }
@@ -130,7 +128,11 @@ async function fetchResources() {
   const deptVal = deptFilter ? deptFilter.value : "";
 
   try {
-    let query = client.from("academic_resources").select("*");
+    let query = client
+      .from("academic_resources")
+      .select(
+        "id, title, department, academic_year, course_code, uploaded_by, download_count",
+      );
 
     if (deptVal) {
       query = query.eq("department", deptVal);
@@ -162,11 +164,6 @@ function renderResources(resources) {
   if (!grid) return;
   grid.innerHTML = "";
 
-  if (resources.length === 0) {
-    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching documents found.</p>`;
-    return;
-  }
-
   resources.forEach((item) => {
     const card = document.createElement("div");
     card.className = "module-card";
@@ -180,16 +177,29 @@ function renderResources(resources) {
 
     card.innerHTML = `
             <div>
-                <span class="featured-badge" style="display: inline-block; padding: 0.2rem 0.6rem; font-size: 0.75rem; border-radius: 4px; background: rgba(0, 102, 255, 0.1); color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">${escapeHTML(item.department)}</span>
-                <h4 style="font-size: 1.1rem; margin: 0.25rem 0 0.5rem 0; color: var(--text-main);">${escapeHTML(item.title)}${escapeHTML(courseCode)}</h4>
+                <span class="featured-badge" style="display: inline-block; padding: 0.2rem 0.6rem; font-size: 0.75rem; border-radius: 4px; background: rgba(0, 102, 255, 0.1); color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">${escapeHTML(
+                  item.department,
+                )}</span>
+                <h4 style="font-size: 1.1rem; margin: 0.25rem 0 0.5rem 0; color: var(--text-main);">${escapeHTML(
+                  item.title,
+                )}${escapeHTML(courseCode)}</h4>
                 <p style="font-size: 0.88rem; margin: 0.25rem 0; color: var(--text-secondary);">
                     Level: ${escapeHTML(item.academic_year || "N/A")}
                 </p>
                 <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                    Shared by: <strong>${escapeHTML(uploadedBy)}</strong> | Downloads: <strong id="dl-count-${item.id}">${item.download_count || 0}</strong>
+                    Shared by: <strong>${escapeHTML(
+                      uploadedBy,
+                    )}</strong> | Downloads: <strong id="dl-count-${item.id}">${
+      item.download_count || 0
+    }</strong>
                 </p>
             </div>
-            <button onclick="downloadResource(${item.id}, '${escapeHTML(item.title).replace(/'/g, "\\'")}')" class="btn-primary" style="margin-top: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 0.6rem; border-radius: 6px; background: var(--primary-color); color: white; cursor: pointer; border: none; width: 100%;">
+            <button onclick="downloadResource(${item.id}, '${escapeHTML(
+      item.title,
+    ).replace(
+      /'/g,
+      "\\'",
+    )}')" class="btn-primary" style="margin-top: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 0.6rem; border-radius: 6px; background: var(--primary-color); color: white; cursor: pointer; border: none; width: 100%;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 Download Resource
             </button>
@@ -203,11 +213,11 @@ async function handleUploadSubmit(e) {
   e.preventDefault();
 
   const user = getLoggedInUser();
-  if (!user || (!user.fullname && !user.user_fullname)) {
-    showToast("You must be signed in to upload resources.", "error");
+  if (!user) {
+    showToast("Please sign in to upload study materials.", "error");
     setTimeout(() => {
       window.location.href = "signin.html?redirect=academics.html";
-    }, 1200);
+    }, 800);
     return;
   }
 
@@ -217,29 +227,45 @@ async function handleUploadSubmit(e) {
     return;
   }
 
-  const regNumber =
-    localStorage.getItem("user_reg") || localStorage.getItem("regNumber") || "";
-  const rawName = user.fullname || user.user_fullname;
-  const formattedUploader = regNumber ? `${rawName} (${regNumber})` : rawName;
+  const uploadForm = document.getElementById("uploadForm");
+  const submitBtn = uploadForm
+    ? uploadForm.querySelector('button[type="submit"]')
+    : null;
+  const originalBtnText = submitBtn ? submitBtn.innerHTML : "Upload Resource";
 
-  const title = document.getElementById("resourceTitle").value.trim();
-  const department = document.getElementById("resourceDept").value;
-  const academic_year = document.getElementById("resourceYear").value.trim();
-  const course_code = document.getElementById("resourceCode").value.trim();
-  const fileInput = document.getElementById("resourceFile");
-
-  if (!fileInput.files || fileInput.files.length === 0) {
-    showToast("Please attach a document file.", "error");
-    return;
-  }
-
-  const file = fileInput.files[0];
-  if (file.size > 10 * 1024 * 1024) {
-    showToast("File size exceeds 10MB limit.", "error");
-    return;
+  // Give immediate UI feedback that upload is active
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = "0.7";
+    submitBtn.innerHTML = `
+      <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+      Uploading...
+    `;
   }
 
   try {
+    const regNumber =
+      localStorage.getItem("user_reg") ||
+      localStorage.getItem("regNumber") ||
+      "";
+    const rawName = user.fullname || user.user_fullname;
+    const formattedUploader = regNumber ? `${rawName} (${regNumber})` : rawName;
+
+    const title = document.getElementById("resourceTitle").value.trim();
+    const department = document.getElementById("resourceDept").value;
+    const academic_year = document.getElementById("resourceYear").value.trim();
+    const course_code = document.getElementById("resourceCode").value.trim();
+    const fileInput = document.getElementById("resourceFile");
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+      throw new Error("Please attach a document file.");
+    }
+
+    const file = fileInput.files[0];
+    if (file.size > 10 * 1024 * 1024) {
+      throw new Error("File size exceeds 10MB limit.");
+    }
+
     const base64File = await convertFileToBase64(file);
 
     const payload = {
@@ -255,37 +281,37 @@ async function handleUploadSubmit(e) {
     const { error } = await client.from("academic_resources").insert([payload]);
     if (error) throw error;
 
-    // Trigger real-time notifications by inserting into the bulletins table
     const bulletinPayload = {
       notice_type: "academic_resource",
       title: `New Study Material: ${title}`,
-      description: `A new resource for ${department} (${course_code || "General"}) was uploaded by ${formattedUploader}.`,
+      description: `A new resource for ${department} (${
+        course_code || "General"
+      }) was uploaded by ${formattedUploader}.`,
       posted_by: formattedUploader,
     };
 
-    const { error: bulletinError } = await client
-      .from("bulletins")
-      .insert([bulletinPayload]);
-    if (bulletinError) {
-      console.error("Error creating notification bulletin:", bulletinError);
-    }
+    await client.from("bulletins").insert([bulletinPayload]);
 
     showToast("Resource uploaded successfully!", "success");
-    document.getElementById("uploadForm").reset();
-    document.getElementById("uploadModal").classList.remove("active");
+    if (uploadForm) uploadForm.reset();
+    const modal = document.getElementById("uploadModal");
+    if (modal) modal.classList.remove("active");
     fetchResources();
   } catch (err) {
     console.error("Upload error:", err);
-    showToast("Error uploading resource: " + err.message, "error");
+    showToast("Error: " + err.message, "error");
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+      submitBtn.innerHTML = originalBtnText;
+    }
   }
 }
 
 async function downloadResource(id, filename) {
   const client = window.supabaseClient || window.db;
-  if (!client) {
-    showToast("Database client not ready.", "error");
-    return;
-  }
+  if (!client) return;
 
   try {
     const { data: item, error } = await client
@@ -295,15 +321,29 @@ async function downloadResource(id, filename) {
       .single();
 
     if (error || !item || !item.file_data) {
-      throw new Error("File not found in database.");
+      throw new Error("File not found.");
     }
 
+    const parts = item.file_data.split(";base64,");
+    const contentType = parts[0].split(":")[1] || "application/octet-stream";
+    const rawData = window.atob(parts[1]);
+    const uInt8Array = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+      uInt8Array[i] = rawData.charCodeAt(i);
+    }
+
+    const blob = new Blob([uInt8Array], { type: contentType });
+    const blobUrl = URL.createObjectURL(blob);
+
     const a = document.createElement("a");
-    a.href = item.file_data;
-    a.download = filename || item.title || "academic_document";
+    a.href = blobUrl;
+    a.download = filename || item.title || "document";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
     const newCount = (item.download_count || 0) + 1;
     await client
@@ -312,9 +352,7 @@ async function downloadResource(id, filename) {
       .eq("id", id);
 
     const countElem = document.getElementById(`dl-count-${id}`);
-    if (countElem) {
-      countElem.textContent = newCount;
-    }
+    if (countElem) countElem.textContent = newCount;
     showToast("Download started!", "success");
   } catch (err) {
     console.error("Download error:", err);
@@ -344,9 +382,9 @@ function escapeHTML(str) {
   return String(str).replace(
     /[&<>'"]/g,
     (tag) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[
         tag
-      ] || tag,
+      ] || tag),
   );
 }
 
@@ -365,9 +403,7 @@ function showToast(message, type = "success") {
   const icon =
     type === "success"
       ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-      : type === "error"
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
   toast.innerHTML = `
         <span class="toast-icon" style="display:inline-flex; align-items:center;">${icon}</span>
@@ -376,10 +412,7 @@ function showToast(message, type = "success") {
 
   container.appendChild(toast);
 
-  setTimeout(() => {
-    toast.classList.add("show");
-  }, 10);
-
+  setTimeout(() => toast.classList.add("show"), 10);
   setTimeout(() => {
     toast.classList.remove("show");
     setTimeout(() => toast.remove(), 300);

@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="refresh" content="0;url=home.html">
+    <title>Domasi Hub</title>
+    <script>
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const user = localStorage.getItem("user") || localStorage.getItem("user_name") || localStorage.getItem("user_fullname");
+
+        if (isLoggedIn && user) {
+            window.location.href = "home.html";
+        } else {
+            window.location.href = "signup.html";
+        }
+    </script>
 </head>
 <body></body>
 </html>

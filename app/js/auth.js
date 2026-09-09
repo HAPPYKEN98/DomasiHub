@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function goNext() {
     location.href =
-      new URLSearchParams(location.search).get("redirect") || "profile.html";
+      new URLSearchParams(location.search).get("redirect") || "home.html";
   }
 });
 

@@ -1,3 +1,21 @@
+// Global array to cache lightweight metadata
+let allAcademicResources = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Defer the vault fetch slightly so the core page layout renders instantly
+  setTimeout(() => {
+    if (typeof loadAcademicVaultPreview === "function") {
+      loadAcademicVaultPreview();
+    } else {
+      fetchAcademicVaultResources();
+    }
+  }, 100);
+});
+
+async function loadAcademicVaultPreview() {
+  await fetchAcademicVaultResources();
+}
+
 async function fetchAcademicVaultResources() {
   const container = document.getElementById("academicVaultContainer");
   const uploadsCount = document.getElementById("academicUploadsCount");
@@ -7,14 +25,18 @@ async function fetchAcademicVaultResources() {
     if (uploadsCount) {
       uploadsCount.textContent = allAcademicResources.length;
     }
-    updateTotalActiveCounter();
+    if (typeof updateTotalActiveCounter === "function")
+      updateTotalActiveCounter();
     renderAcademicVault(allAcademicResources.slice(0, 3));
     return;
   }
 
   // Fallback standalone fetch if called independently on another page
   try {
-    const { data, error } = await window.db
+    const client = window.supabaseClient || window.db;
+    if (!client) throw new Error("Database client not found");
+
+    const { data, error } = await client
       .from("academic_resources")
       .select(
         "id, title, department, course_code, uploaded_by, created_at, download_count",
@@ -29,7 +51,8 @@ async function fetchAcademicVaultResources() {
       uploadsCount.textContent = allAcademicResources.length;
     }
 
-    updateTotalActiveCounter();
+    if (typeof updateTotalActiveCounter === "function")
+      updateTotalActiveCounter();
     renderAcademicVault(allAcademicResources.slice(0, 3));
   } catch (err) {
     console.error("Failed to fetch academic vault resources:", err);
@@ -63,14 +86,20 @@ function renderAcademicVault(resources) {
 
     const safeTitle =
       typeof escapeHTML === "function" ? escapeHTML(item.title) : item.title;
+    const safeDept =
+      typeof escapeHTML === "function"
+        ? escapeHTML(item.department)
+        : item.department;
+    const safeCourse =
+      typeof escapeHTML === "function" ? escapeHTML(courseCode) : courseCode;
+    const safeUploader =
+      typeof escapeHTML === "function" ? escapeHTML(uploader) : uploader;
 
     row.innerHTML = `
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; opacity: 0.8;"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
       <div class="file-info" style="flex: 1; overflow: hidden;">
         <strong style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">${safeTitle}</strong>
-        <small>${escapeHTML(item.department)}${escapeHTML(
-      courseCode,
-    )} | By ${escapeHTML(uploader)}</small>
+        <small>${safeDept}${safeCourse} | By ${safeUploader}</small>
       </div>
       <button onclick="downloadAcademicFile(${item.id}, '${safeTitle.replace(
       /'/g,
@@ -125,12 +154,28 @@ async function downloadAcademicFile(id, filename) {
       return;
     }
 
+    // Convert base64 data URL to a clean Blob object to prevent browser security warnings
+    const parts = record.file_data.split(";base64,");
+    const contentType = parts[0].split(":")[1] || "application/octet-stream";
+    const rawData = window.atob(parts[1]);
+    const uInt8Array = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+      uInt8Array[i] = rawData.charCodeAt(i);
+    }
+
+    const blob = new Blob([uInt8Array], { type: contentType });
+    const blobUrl = URL.createObjectURL(blob);
+
     const a = document.createElement("a");
-    a.href = record.file_data;
+    a.href = blobUrl;
     a.download = filename || "academic_document";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
+    // Clean up memory
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
     const newCount = (record.download_count || 0) + 1;
     await client
