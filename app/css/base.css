@@ -12,25 +12,29 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 82px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  padding-bottom: max(env(safe-area-inset-bottom), 95px); /* Safely clears bottom nav & hardware buttons */
   transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 main {
   flex-grow: 1;
-  padding: 2rem 5%;
+  padding: 1.25rem 1rem; /* Optimized mobile padding instead of wide percentage view */
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-core);
   margin-bottom: 0.5rem;
   font-weight: 700;
+  word-break: break-word; /* Prevents long titles from overflowing screen */
 }
 
 p {
   color: var(--text-secondary);
+  word-break: break-word;
 }
-

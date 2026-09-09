@@ -83,7 +83,7 @@
         <h3>Student Management Portal</h3>
         <p>
           Manage your active campus marketplace goods, configure printer
-          stations, or update utility records.
+          stations, mobile money agent listings, or professional service experts.
         </p>
       </section>
 
@@ -139,6 +139,34 @@
             Add a Hostel
           </button>
         </div>
+
+        <div class="module-card">
+          <div class="card-icon" style="color: #dc2626;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+          </div>
+          <h4>Mobile Money Agent</h4>
+          <p>Register your Airtel Money or TNM Mpamba booth code and location.</p>
+          <button
+            class="btn-primary modal-trigger"
+            data-modal="mobileMoneyModal"
+          >
+            Register Agent
+          </button>
+        </div>
+
+        <div class="module-card">
+          <div class="card-icon" style="color: #0284c7;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          </div>
+          <h4>Skills &amp; Expert Service</h4>
+          <p>List tailoring, phone repair, shoe making, or artisan services.</p>
+          <button
+            class="btn-primary modal-trigger"
+            data-modal="expertModal"
+          >
+            Add Service
+          </button>
+        </div>
       </div>
     </main>
 
@@ -153,6 +181,7 @@
           <button class="close-modal">&times;</button>
         </div>
         <form id="marketplaceForm" class="hub-modal-form">
+          <input type="hidden" name="category" value="marketplace" />
           <div class="hub-form-group">
             <label>Item Name / Title</label>
             <input type="text" name="title" placeholder="e.g., Scientific Calculator, Mattress" required />
@@ -171,7 +200,7 @@
           </div>
           <div class="hub-form-group">
             <label>WhatsApp Contact Number</label>
-            <input type="text" name="contact_number" placeholder="e.g., 0888XXXXXX" required />
+            <input type="text" name="contact_number" placeholder="e.g., +265888XXXXXX" required />
           </div>
           <div class="hub-form-group">
             <label>Item Photo Asset</label>
@@ -199,6 +228,7 @@
           <button class="close-modal">&times;</button>
         </div>
         <form id="printerForm" class="hub-modal-form">
+          <input type="hidden" name="category" value="printing" />
           <div class="hub-form-group">
             <label>Printing Station / Business Name</label>
             <input type="text" name="title" placeholder="e.g., Mzumara Tech Prints, Block 4 Hub" required />
@@ -213,7 +243,7 @@
           </div>
           <div class="hub-form-group">
             <label>WhatsApp Queue Contact Number</label>
-            <input type="text" name="contact_number" placeholder="e.g., 0999XXXXXX" required />
+            <input type="text" name="contact_number" placeholder="e.g., +265999XXXXXX" required />
           </div>
           <div class="hub-form-group">
             <label>Station Display Banner Photo</label>
@@ -241,6 +271,7 @@
           <button class="close-modal">&times;</button>
         </div>
         <form id="accommodationForm" class="hub-modal-form">
+          <input type="hidden" name="category" value="accommodation" />
           <div class="hub-form-group">
             <label>Hostel Name / Bedspace Title</label>
             <input type="text" name="title" placeholder="e.g., Single Room near Campus Gate" required />
@@ -259,7 +290,7 @@
           </div>
           <div class="hub-form-group">
             <label>Landlord / Agent WhatsApp Number</label>
-            <input type="text" name="contact_number" placeholder="e.g., 0888XXXXXX" required />
+            <input type="text" name="contact_number" placeholder="e.g., +265888XXXXXX" required />
           </div>
           <div class="hub-form-group">
             <label>Property Photo Asset</label>
@@ -276,7 +307,99 @@
       </div>
     </div>
 
-   <nav class="bottom-nav" aria-label="Main navigation">
+    <!-- Mobile Money Agent Modal -->
+    <div id="mobileMoneyModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="color: var(--text-core); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            Register Mobile Money Agent
+          </h3>
+          <button class="close-modal">&times;</button>
+        </div>
+        <form id="mobileMoneyForm" class="hub-modal-form">
+          <div class="hub-form-group">
+            <label>Network Provider</label>
+            <select name="category" required>
+              <option value="airtel_money">Airtel Money Agent</option>
+              <option value="tnm_mpamba">TNM Mpamba Agent</option>
+            </select>
+          </div>
+          <div class="hub-form-group">
+            <label>Agent / Business Name</label>
+            <input type="text" name="title" placeholder="e.g., Emmanuel Airtel Booth" required />
+          </div>
+          <div class="hub-form-group">
+            <label>Agent Code</label>
+            <input type="text" name="agent_code" placeholder="e.g., Code: 492011" required />
+          </div>
+          <div class="hub-form-group">
+            <label>Location / Point Details</label>
+            <input type="text" name="location_details" placeholder="e.g., Near College Main Dining Hall" required />
+          </div>
+          <div class="hub-form-group">
+            <label>WhatsApp Contact Phone Number</label>
+            <input type="text" name="contact_number" placeholder="e.g., +265999XXXXXX" required />
+          </div>
+          <div class="hub-form-group">
+            <label>Booth / Logo Photo (Optional)</label>
+            <div class="file-input-wrapper">
+              <input type="file" name="image" id="money-image" accept="image/*" />
+              <label for="money-image" class="file-input-label">Choose File</label>
+              <span class="file-name-display">No file chosen</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 0.5rem; padding: 0.8rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer;">
+            Publish Agent Listing
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Skills & Expert Service Modal -->
+    <div id="expertModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="color: var(--text-core); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            Register Campus Skill / Expert
+          </h3>
+          <button class="close-modal">&times;</button>
+        </div>
+        <form id="expertForm" class="hub-modal-form">
+          <input type="hidden" name="category" value="expert" />
+          <div class="hub-form-group">
+            <label>Service / Skill Title</label>
+            <input type="text" name="title" placeholder="e.g., Professional Tailoring & Clothing Alterations" required />
+          </div>
+          <div class="hub-form-group">
+            <label>Short Description of Work</label>
+            <textarea name="description" rows="3" placeholder="Describe your services (e.g., fixing trousers, repairing smartphones, sewing graduation gowns)..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); background: var(--bg-input, rgba(0,0,0,0.2)); color: var(--text-core);" required></textarea>
+          </div>
+          <div class="hub-form-group">
+            <label>Location / Room Working Space</label>
+            <input type="text" name="location_details" placeholder="e.g., Block 2 Room 14 / Off-campus" required />
+          </div>
+          <div class="hub-form-group">
+            <label>WhatsApp Contact Number</label>
+            <input type="text" name="contact_number" placeholder="e.g., +265888XXXXXX" required />
+          </div>
+          <div class="hub-form-group">
+            <label>Work Sample / Display Photo</label>
+            <div class="file-input-wrapper">
+              <input type="file" name="image" id="expert-image" accept="image/*" required />
+              <label for="expert-image" class="file-input-label">Choose File</label>
+              <span class="file-name-display">No file chosen</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 0.5rem; padding: 0.8rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer;">
+            Publish Expert Service
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
       <a href="home.html" class="nav-home">
         <svg viewBox="0 0 24 24">
           <path d="m3 11 9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -284,9 +407,17 @@
         </svg>
         <span>Home</span>
       </a>
+      <a href="explore.html" class="nav-explore">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        <span>Explore</span>
+      </a>
       <a href="portal.html" class="add-nav active" aria-label="Add listing">
         <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
         <span>Add</span>
+      </a>
+      <a href="services.html" class="nav-services">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        <span>Services</span>
       </a>
       <a href="profile.html" class="nav-me">
         <svg viewBox="0 0 24 24">

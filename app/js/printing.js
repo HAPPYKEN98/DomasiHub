@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPrinters();
 });
 
+function sanitizeMalawianWhatsApp(rawNumber) {
+  if (!rawNumber) return "";
+  let cleaned = rawNumber.trim().replace(/[\s()-]/g, "");
+  if (cleaned.startsWith("+265")) return cleaned.replace("+", "");
+  if (cleaned.startsWith("265") && cleaned.length === 12) return cleaned;
+  if (cleaned.startsWith("0") && cleaned.length === 10)
+    return "265" + cleaned.substring(1);
+  if (cleaned.length === 9) return "265" + cleaned;
+  return cleaned;
+}
+
 async function loadPrinters() {
   const grid = document.getElementById("printing-grid");
   if (!grid) return;
@@ -40,19 +51,25 @@ async function loadPrinters() {
 
         const priceFormatted =
           "MWK " + parseFloat(item.price || 0).toLocaleString();
-        const cleanPhone = item.contact_number
-          ? item.contact_number.replace(/[^0-9]/g, "")
-          : "";
+        const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
         const imageSrc =
           item.image_path ||
           "https://via.placeholder.com/300x200?text=No+Image";
 
+        const whatsappMessage = encodeURIComponent(
+          "Hello, I saw your printer listed on Domasi Hub and wanted to print an assignment",
+        );
+
         card.innerHTML = `
                     <div style="background: rgba(0, 0, 0, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 4px;">
-                        <img src="${imageSrc}" alt="${item.title || "Printer Station"}" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
+                        <img src="${imageSrc}" alt="${
+          item.title || "Printer Station"
+        }" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
                     </div>
                     <div class="product-info" style="margin-top:1rem;">
-                        <h3 style="margin: 0 0 0.5rem 0;">${item.title || "Untitled Station"}</h3>
+                        <h3 style="margin: 0 0 0.5rem 0;">${
+                          item.title || "Untitled Station"
+                        }</h3>
                         <div style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; margin: 0.4rem 0; color: var(--text-secondary);">
                             <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: rgba(0, 102, 255, 0.1); color: var(--primary-color); flex-shrink: 0;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
@@ -60,7 +77,7 @@ async function loadPrinters() {
                             <span>${item.location_details || "N/A"}</span>
                         </div>
                         <p class="price" style="font-weight:bold; color:var(--primary-color); margin:0.75rem 0;">Rate: ${priceFormatted} / page</p>
-                        <a href="https://wa.me/${cleanPhone}?text=Hi,%20I'm%20interested%20in%20sending%20a%20print%20job%20to%20${encodeURIComponent(item.title || "")}" target="_blank" class="btn-primary" style="display:block; text-align:center; text-decoration:none; padding:0.6rem; border-radius:6px; background:var(--primary-color); color:white;">Send Document</a>
+                        <a href="https://wa.me/${cleanPhone}?text=${whatsappMessage}" target="_blank" class="btn-primary" style="display:block; text-align:center; text-decoration:none; padding:0.6rem; border-radius:6px; background:var(--primary-color); color:white;">Send Document</a>
                     </div>
                 `;
         grid.appendChild(card);

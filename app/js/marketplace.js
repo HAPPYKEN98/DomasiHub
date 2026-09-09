@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMarketplace();
 });
 
+function sanitizeMalawianWhatsApp(rawNumber) {
+  if (!rawNumber) return "";
+  let cleaned = rawNumber.trim().replace(/[\s()-]/g, "");
+  if (cleaned.startsWith("+265")) return cleaned.replace("+", "");
+  if (cleaned.startsWith("265") && cleaned.length === 12) return cleaned;
+  if (cleaned.startsWith("0") && cleaned.length === 10)
+    return "265" + cleaned.substring(1);
+  if (cleaned.length === 9) return "265" + cleaned;
+  return cleaned;
+}
+
 function formatTitle(title) {
   if (!title) return "Untitled Item";
   return title
@@ -61,12 +72,14 @@ async function loadMarketplace() {
 
         const priceFormatted =
           "MWK " + parseFloat(item.price || 0).toLocaleString();
-        const cleanPhone = item.contact_number
-          ? item.contact_number.replace(/[^0-9]/g, "")
-          : "";
+        const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
         const imageSrc =
           item.image_path ||
           "https://via.placeholder.com/300x200?text=No+Image";
+
+        const whatsappMessage = encodeURIComponent(
+          `Hello, I'm interested in the item [${titleClean}] that you posted on Domasi Hub`,
+        );
 
         card.innerHTML = `
                     <div class="product-image" style="background: rgba(0, 0, 0, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 4px;">
@@ -76,7 +89,7 @@ async function loadMarketplace() {
                         <h3 style="margin: 0.2rem 0;">${titleClean}</h3>
                         <p class="condition" style="font-size:0.85rem; color:var(--text-secondary); margin:0.2rem 0;">Condition: ${conditionClean}</p>
                         <p class="price" style="font-weight:bold; color:var(--primary-color); margin:0.4rem 0;">${priceFormatted}</p>
-                        <a href="https://wa.me/${cleanPhone}?text=Hi,%20I'm%20interested%20in%20your%20listing:%20${encodeURIComponent(titleClean)}%20on%20Domasi%20Hub" target="_blank" class="btn-primary btn-marketplace" style="display:block; text-align:center; text-decoration:none; margin-top:0.75rem; padding:0.6rem;">Chat on WhatsApp</a>
+                        <a href="https://wa.me/${cleanPhone}?text=${whatsappMessage}" target="_blank" class="btn-primary btn-marketplace" style="display:block; text-align:center; text-decoration:none; margin-top:0.75rem; padding:0.6rem;">Chat on WhatsApp</a>
                     </div>
                 `;
         grid.appendChild(card);

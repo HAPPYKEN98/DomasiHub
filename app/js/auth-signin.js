@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => {
         location.href =
-          new URLSearchParams(location.search).get("redirect") || "portal.html";
+          new URLSearchParams(location.search).get("redirect") || "profile.html";
       }, 1000);
     } catch (err) {
       console.error(err);

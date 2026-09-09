@@ -2,14 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign In | Domasi Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Domasi Hub | Services</title>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/header-nav.css" />
     <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/academic-window.css" />
     <link rel="stylesheet" href="css/mobile-nav.css" />
+    <link rel="stylesheet" href="css/services.css" />
+    <link rel="manifest" href="manifest.json" />
     <link
       rel="icon"
       type="image/svg+xml"
@@ -17,8 +18,9 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/auth-router.js"></script>
   </head>
-  <body>
+  <body class="is-native-app">
     <header class="main-header">
       <div class="logo">
         <h1>
@@ -36,6 +38,7 @@
         </h1>
       </div>
       <nav class="main-nav">
+        <div id="authNavContainer" style="display: none"></div>
         <div class="theme-switch-wrapper">
           <button
             id="themeToggle"
@@ -76,77 +79,86 @@
       </nav>
     </header>
 
-    <main
-      class="auth-container"
-      style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 75vh;
-      "
-    >
-      <div class="auth-card" style="max-width: 420px; width: 100%">
-        <h2 style="text-align: center">Welcome Back</h2>
-        <p
-          class="auth-subtitle"
-          style="text-align: center; margin-bottom: 1.5rem"
-        >
-          Sign in to access your student utility network.
-        </p>
-
-        <form id="signInForm" novalidate>
-          <div class="form-group">
-            <label for="regNumber">Registration Number</label>
-            <input
-              type="text"
-              id="regNumber"
-              placeholder="Enter your student ID"
-              required
-              autocomplete="off"
-            />
-            <div id="validationFeedback" class="feedback-message"></div>
-          </div>
-
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            class="btn-primary btn-block"
-            style="width: 100%; margin-top: 0.5rem"
-          >
-            Sign In
-          </button>
-        </form>
-
-        <div
-          class="auth-switch"
-          style="text-align: center; margin-top: 1.25rem"
-        >
-          <p>
-            New to the platform?
-            <a
-              href="signup.html"
-              style="
-                color: var(--primary-color);
-                font-weight: 600;
-                text-decoration: none;
-              "
-              >Create an account</a
-            >
-          </p>
-        </div>
+    <main class="services-gallery-main">
+      <div class="services-gallery-grid" id="servicesGalleryContainer">
+        <div class="services-loading">Loading network agents and campus experts...</div>
       </div>
     </main>
 
-    <script src="js/auth-signin.js"></script>
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="home.html" class="nav-home">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m3 11 9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M9 22v-7h6v7" />
+        </svg>
+        <span>Home</span>
+      </a>
+      <a href="explore.html" class="nav-explore">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon
+            points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"
+          ></polygon>
+        </svg>
+        <span>Explore</span>
+      </a>
+      <a href="portal.html" class="add-nav" aria-label="Add listing">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </a>
+      <a href="services.html" class="nav-services active">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        <span>Services</span>
+      </a>
+      <a href="profile.html" class="nav-me">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 21a8 8 0 0 0-16 0" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <span>Me</span>
+      </a>
+    </nav>
+
     <script src="js/theme.js"></script>
+    <script src="js/services.js"></script>
   </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Domasi Hub | App</title>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
@@ -19,8 +19,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/auth-nav.js"></script>
-    <script src="js/auth-router.js"></script>
-    <script src="js/auth-signin.js"></script>
     <script src="js/notifications.js"></script>
     <script src="js/academics-vault.js"></script>
     <script src="js/search-listings.js"></script>
@@ -112,225 +110,7 @@
     </header>
 
     <main style="padding-bottom: 0.5rem">
-      <section
-        class="section-title"
-        style="text-align: center; margin-bottom: 2rem; margin-top: 1.5rem"
-      >
-        <div class="hero-search-wrapper">
-          <div class="hero-search-box">
-            <svg
-              class="search-input-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input
-              type="text"
-              id="heroSearchInput"
-              placeholder="Search items, past papers, print stations or accommodations..."
-              aria-label="Search listings"
-            />
-            <button
-              id="heroSearchBtn"
-              class="hero-search-btn"
-              aria-label="Search"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <span>Search</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section style="margin-bottom: 3.5rem">
-        <div
-          class="latest-updates-header-box"
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: nowrap;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-          "
-        >
-          <div style="min-width: 0; flex: 1">
-            <h3
-              id="featuredTitle"
-              style="
-                font-size: clamp(1rem, 3vw, 1.4rem);
-                margin: 0;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                color: #f8fafc;
-              "
-            >
-              Latest Updates
-            </h3>
-          </div>
-          <button
-            id="clearSearchBtn"
-            style="
-              display: none;
-              align-items: center;
-              gap: 4px;
-              font-size: 0.8rem;
-              font-weight: 600;
-              padding: 0.35rem 0.75rem;
-              cursor: pointer;
-              background-color: rgba(255, 255, 255, 0.1);
-              color: #f8fafc;
-              border: 1px solid rgba(255, 255, 255, 0.2);
-              border-radius: 6px;
-              white-space: nowrap;
-              flex-shrink: 0;
-            "
-          >
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-            Clear
-          </button>
-        </div>
-
-        <div id="featured-grid" class="featured-grid">
-          <p
-            style="
-              grid-column: 1/-1;
-              text-align: center;
-              padding: 2rem;
-              color: #94a3b8;
-            "
-          >
-            Loading...
-          </p>
-        </div>
-      </section>
-      <section style="margin-bottom: 3.5rem">
-       <div class="latest-updates-header-box" style="margin-bottom: 1.5rem;">
-  <div class="section-title" style="margin-bottom: 0;">
-    <h3 style="color: #f8fafc; font-size: clamp(1.1rem, 3.5vw, 1.6rem); margin-bottom: 0.25rem;">Explore Campus Utilities</h3>
-    <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Select a category to post or search listings.</p>
-  </div>
-</div>
-
-        <div class="services-grid">
-          <div class="module-card">
-            <h4 style="font-size: 1.25rem">Campus Marketplace</h4>
-            <p
-              style="
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin-bottom: 0.5rem;
-              "
-            >
-              Buy or sell academic modules, textbooks, electronics, mattresses,
-              and student essentials directly via WhatsApp networks.
-            </p>
-            <p
-              style="
-                font-weight: bold;
-                font-size: 0.85rem;
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-              "
-            >
-              Active Listings: <span id="marketplaceCount">0</span>
-            </p>
-            <a
-              href="marketplace.html"
-              class="btn-primary"
-              style="margin-top: auto"
-              >Explore Market</a
-            >
-          </div>
-
-          <div class="module-card">
-            <h4 style="font-size: 1.25rem">Student Printing Hub</h4>
-            <p
-              style="
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin-bottom: 0.5rem;
-              "
-            >
-              Locate operational, student-run print configurations across campus
-              blocks. Upload assignment files instantly for queue printing.
-            </p>
-            <p
-              style="
-                font-weight: bold;
-                font-size: 0.85rem;
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-              "
-            >
-              Active Stations: <span id="printingCount">0</span>
-            </p>
-            <a href="printing.html" class="btn-primary" style="margin-top: auto"
-              >Find Printers</a
-            >
-          </div>
-
-          <div class="module-card">
-            <h4 style="font-size: 1.25rem">Accommodation Directory</h4>
-            <p
-              style="
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin-bottom: 0.5rem;
-              "
-            >
-              Browse verified off-campus rentals, student boarding complexes,
-              and bedspaces complete with direct landlord contact links.
-            </p>
-            <p
-              style="
-                font-weight: bold;
-                font-size: 0.85rem;
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-              "
-            >
-              Active Vacancies: <span id="accommodationCount">0</span>
-            </p>
-            <a
-              href="accommodation.html"
-              class="btn-primary"
-              style="margin-top: auto"
-              >View Hostels</a
-            >
-          </div>
-        </div>
-      </section>
-
+      <!-- Academic Vault Moved to Top & Optimized for Mobile -->
       <section class="academic-display-window" style="margin-bottom: 3.5rem">
         <div class="academic-window-glow"></div>
         <div class="academic-window-content">
@@ -418,7 +198,7 @@
           </div>
         </div>
 
-        <div class="academic-window-preview" style="width: 360px">
+        <div class="academic-window-preview" style="width: 100%; max-width: 100%;">
           <div class="preview-header">
             <span class="dot red"></span>
             <span class="dot yellow"></span>
@@ -438,6 +218,105 @@
             >
               Fetching live academic resources...
             </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Campus Utilities Section Moved Down -->
+      <section style="margin-bottom: 3.5rem">
+        <div class="latest-updates-header-box" style="margin-bottom: 1.5rem;">
+          <div class="section-title" style="margin-bottom: 0;">
+            <h3 style="color: #f8fafc; font-size: clamp(1.1rem, 3.5vw, 1.6rem); margin-bottom: 0.25rem;">Explore Campus Utilities</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Select a category to post or search listings.</p>
+          </div>
+        </div>
+
+        <div class="services-grid">
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Campus Marketplace</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Buy or sell academic modules, textbooks, electronics, mattresses,
+              and student essentials directly via WhatsApp networks.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Listings: <span id="marketplaceCount">0</span>
+            </p>
+            <a
+              href="marketplace.html"
+              class="btn-primary"
+              style="margin-top: auto"
+              >Explore Market</a
+            >
+          </div>
+
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Student Printing Hub</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Locate operational, student-run print configurations across campus
+              blocks. Upload assignment files instantly for queue printing.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Stations: <span id="printingCount">0</span>
+            </p>
+            <a href="printing.html" class="btn-primary" style="margin-top: auto"
+              >Find Printers</a
+            >
+          </div>
+
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Accommodation Directory</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Browse verified off-campus rentals, student boarding complexes,
+              and bedspaces complete with direct landlord contact links.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Vacancies: <span id="accommodationCount">0</span>
+            </p>
+            <a
+              href="accommodation.html"
+              class="btn-primary"
+              style="margin-top: auto"
+              >View Hostels</a
+            >
           </div>
         </div>
       </section>
