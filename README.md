@@ -155,6 +155,10 @@ To customize the app for a production environment:
 3. Test the app locally using the static server.
 4. Run `npx cap sync` before building mobile apps.
 
-## License
+## License & Attribution
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This repository is released under the MIT License. The root [LICENSE](LICENSE) file contains the full legal terms and warranty disclaimer.
+
+When distributing or reusing the project, keep the copyright notice and license text in the source tree and preserve the repository attribution in any fork or derivative app.
+
+The web pages in the app also carry a short public licensing notice so the expected MIT terms appear in the delivered UI surface.
