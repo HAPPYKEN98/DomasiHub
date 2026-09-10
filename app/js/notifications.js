@@ -42,9 +42,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (permStatus.display !== "granted") {
         await LocalNotifications.requestPermissions();
       }
+    } else if (
+      "Notification" in window &&
+      Notification.permission !== "granted"
+    ) {
+      await Notification.requestPermission();
     }
   } catch (e) {
-    // Fallback gracefully for standard browser testing
+    console.warn("Permission request error:", e);
   }
 
   async function fetchAndUpdateBadge() {
@@ -53,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { data: bulletins, error } = await db
         .from("bulletins")
         .select("id")
-        .gte("created_at", userJoinedAt); // Only count bulletins from their join time onwards
+        .gte("created_at", userJoinedAt);
 
       if (error) throw error;
 
@@ -84,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await db
         .from("bulletins")
         .select("*")
-        .gte("created_at", userJoinedAt) // Only fetch bulletins from their join time onwards
+        .gte("created_at", userJoinedAt)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -99,16 +104,34 @@ document.addEventListener("DOMContentLoaded", async () => {
               : "notification-read";
 
             return `
-              <article class="notification-item ${unreadClass}" data-id="${x.id}" style="padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: all 0.2s ease; cursor: pointer; ${unreadStyle(isUnread)}">
+              <article class="notification-item ${unreadClass}" data-id="${
+              x.id
+            }" style="padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: all 0.2s ease; cursor: pointer; ${unreadStyle(
+              isUnread,
+            )}">
                 <div class="notification-header" style="display: flex; justify-content: space-between; align-items: center;">
                   <h3 style="margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
-                    ${isUnread ? '<span style="width: 8px; height: 8px; background: var(--primary-color); border-radius: 50%; display: inline-block;"></span>' : ""}
+                    ${
+                      isUnread
+                        ? '<span style="width: 8px; height: 8px; background: var(--primary-color); border-radius: 50%; display: inline-block;"></span>'
+                        : ""
+                    }
                     ${escapeHtml(x.title)}
                   </h3>
-                  <span class="notification-poster" style="font-size: 0.8rem; color: var(--text-secondary);">By: ${escapeHtml(x.posted_by || "Unknown")}</span>
+                  <span class="notification-poster" style="font-size: 0.8rem; color: var(--text-secondary);">By: ${escapeHtml(
+                    x.posted_by || "Unknown",
+                  )}</span>
                 </div>
-                <p style="margin: 0.5rem 0 0.25rem 0; font-size: 0.9rem; color: var(--text-main);">${escapeHtml(x.description)}</p>
-                ${x.event_date ? `<small class="notification-date" style="color: var(--text-secondary);">Date: ${escapeHtml(x.event_date)}</small>` : ""}
+                <p style="margin: 0.5rem 0 0.25rem 0; font-size: 0.9rem; color: var(--text-main);">${escapeHtml(
+                  x.description,
+                )}</p>
+                ${
+                  x.event_date
+                    ? `<small class="notification-date" style="color: var(--text-secondary);">Date: ${escapeHtml(
+                        x.event_date,
+                      )}</small>`
+                    : ""
+                }
               </article>
             `;
           })
@@ -116,7 +139,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             "<hr style='border: none; border-top: 1px solid var(--border-subtle); margin: 0.5rem 0;'>",
           );
 
-        // Attach click listeners to handle marking individual items as read/clicked
         itemsContainer
           .querySelectorAll(".notification-item")
           .forEach((article) => {
@@ -124,7 +146,6 @@ document.addEventListener("DOMContentLoaded", async () => {
               const id = parseInt(this.getAttribute("data-id"));
               markAsRead(id);
 
-              // De-highlight instantly for this user
               this.classList.remove("notification-unread");
               this.classList.add("notification-read");
               this.style.borderLeft = "none";
@@ -147,14 +168,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Helper for inline styling based on read state
   function unreadStyle(isUnread) {
     return isUnread
       ? "border-left: 4px solid var(--primary-color); background: rgba(0, 102, 255, 0.04);"
       : "border-left: 4px solid transparent; background: transparent;";
   }
 
-  // Get initial count for the badge
   await fetchAndUpdateBadge();
 
   // Listen for real-time inserts to bulletins table
@@ -165,13 +184,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       async (payload) => {
         const newNotice = payload.new;
 
-        // If a new bulletin comes in that is newer than their join time, process it
         if (new Date(newNotice.created_at) >= new Date(userJoinedAt)) {
           fetchAndUpdateBadge();
 
           const posterName = newNotice.posted_by || "Someone";
 
-          // Trigger native mobile local notification (with browser fallback safety)
+          // Trigger native mobile local notification via Capacitor
           try {
             const LocalNotifications =
               window.Capacitor?.Plugins?.LocalNotifications;
@@ -181,49 +199,51 @@ document.addEventListener("DOMContentLoaded", async () => {
                   {
                     title: `New Item Posted by ${posterName}`,
                     body: newNotice.title,
-                    id: Number(newNotice.id) || Date.now(),
+                    id:
+                      Number(newNotice.id) ||
+                      Math.floor(Math.random() * 100000),
+                    schedule: { at: new Date(Date.now() + 100) },
+                    sound: undefined,
                   },
                 ],
               });
-            } else if (
-              "Notification" in window &&
-              Notification.permission === "granted"
-            ) {
-              new Notification(`New Item Posted by ${posterName}`, {
-                body: newNotice.title,
-                icon: "assets/logo.svg",
-              });
             }
           } catch (e) {
-            console.error("Error scheduling notification:", e);
+            console.error("Error scheduling local notification:", e);
           }
 
-          // If user is on notifications.html, dynamically prepend new unread item
           if (itemsContainer) {
             const articleHtml = `
-              <article class="notification-item notification-unread" data-id="${newNotice.id}" style="padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: all 0.2s ease; cursor: pointer; border-left: 4px solid var(--primary-color); background: rgba(0, 102, 255, 0.04);">
+              <article class="notification-item notification-unread" data-id="${
+                newNotice.id
+              }" style="padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: all 0.2s ease; cursor: pointer; border-left: 4px solid var(--primary-color); background: rgba(0, 102, 255, 0.04);">
                 <div class="notification-header" style="display: flex; justify-content: space-between; align-items: center;">
                   <h3 style="margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
                     <span style="width: 8px; height: 8px; background: var(--primary-color); border-radius: 50%; display: inline-block;"></span>
                     ${escapeHtml(newNotice.title)}
                   </h3>
-                  <span class="notification-poster" style="font-size: 0.8rem; color: var(--text-secondary);">By: ${escapeHtml(posterName)}</span>
+                  <span class="notification-poster" style="font-size: 0.8rem; color: var(--text-secondary);">By: ${escapeHtml(
+                    posterName,
+                  )}</span>
                 </div>
-                <p style="margin: 0.5rem 0 0.25rem 0; font-size: 0.9rem; color: var(--text-main);">${escapeHtml(newNotice.description)}</p>
-                ${newNotice.event_date ? `<small class="notification-date" style="color: var(--text-secondary);">Date: ${escapeHtml(newNotice.event_date)}</small>` : ""}
+                <p style="margin: 0.5rem 0 0.25rem 0; font-size: 0.9rem; color: var(--text-main);">${escapeHtml(
+                  newNotice.description,
+                )}</p>
               </article>
             `;
 
             const newHr =
               "<hr style='border: none; border-top: 1px solid var(--border-subtle); margin: 0.5rem 0;'>";
-            if (itemsContainer.innerHTML.includes("No notifications yet.")) {
+            if (
+              itemsContainer.innerHTML.includes("No notifications yet.") ||
+              itemsContainer.innerHTML.includes("Loading...")
+            ) {
               itemsContainer.innerHTML = articleHtml;
             } else {
               itemsContainer.innerHTML =
                 articleHtml + newHr + itemsContainer.innerHTML;
             }
 
-            // Attach listener to the newly prepended item
             const freshItem = itemsContainer.querySelector(
               `[data-id="${newNotice.id}"]`,
             );

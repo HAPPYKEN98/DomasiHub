@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Domasi Hub</title>
-    <script>
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        const user = localStorage.getItem("user") || localStorage.getItem("user_name") || localStorage.getItem("user_fullname");
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Domasi Hub</title>
+  <script>
+    (function() {
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const user = localStorage.getItem("user") || localStorage.getItem("user_name") || localStorage.getItem("user_fullname");
 
-        if (isLoggedIn && user) {
-            window.location.href = "home.html";
-        } else {
-            window.location.href = "signup.html";
-        }
-    </script>
+      // If they are logged in, go home. Otherwise, hand them over to welcome.html to choose.
+      if (isLoggedIn && user) {
+        window.location.replace("home.html");
+      } else {
+        window.location.replace("welcome.html");
+      }
+    })();
+  </script>
 </head>
-<body></body>
+<body>
+  <!-- Blank body while routing -->
+</body>
 </html>

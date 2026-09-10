@@ -1,0 +1,223 @@
+/* Animated Gradient Background matching Domasi Hub branding (#0066FF, #00D4FF, #0F172A) */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(-45deg, #070a12, #0f172a, #00224d, #004480, #00122e);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating Particles */
+.bg-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.5) 0%, rgba(0, 102, 255, 0) 70%);
+  animation: float 14s infinite ease-in-out;
+}
+
+.p1 { width: 220px; height: 220px; top: -5%; left: -10%; animation-duration: 16s; }
+.p2 { width: 280px; height: 280px; bottom: -8%; right: -10%; animation-duration: 20s; animation-delay: -5s; }
+.p3 { width: 120px; height: 120px; top: 45%; left: 75%; animation-duration: 12s; animation-delay: -2s; }
+.p4 { width: 80px; height: 80px; top: 20%; right: 15%; animation-duration: 10s; animation-delay: -7s; }
+.p5 { width: 160px; height: 160px; bottom: 20%; left: 10%; animation-duration: 18s; animation-delay: -3s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.35; }
+  50% { transform: translateY(-45px) scale(1.2) rotate(180deg); opacity: 0.75; }
+}
+
+/* Container Layout */
+.welcome-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 3rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Massive Logo Display */
+.welcome-brand {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.welcome-logo {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  filter: drop-shadow(0 14px 32px rgba(0, 102, 255, 0.45));
+  animation: logoGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+  from { filter: drop-shadow(0 8px 20px rgba(0, 102, 255, 0.35)); transform: scale(1); }
+  to { filter: drop-shadow(0 18px 40px rgba(0, 212, 255, 0.65)); transform: scale(1.02); }
+}
+
+/* Button Group */
+.welcome-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-fancy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1.1rem 1.5rem;
+  border-radius: 16px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Get Started (Primary Accent) */
+.btn-get-started {
+  background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 28px rgba(0, 102, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-get-started:hover, .btn-get-started:active {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0, 212, 255, 0.65);
+}
+
+/* Create Account (Glass Accent) */
+.btn-signup {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-signup:hover, .btn-signup:active {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Sign In (Subdued Glass) */
+.btn-signin {
+  background: rgba(15, 23, 42, 0.65);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-signin:hover, .btn-signin:active {
+  color: #ffffff;
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+/* SVG Arrows */
+.btn-arrow {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.btn-fancy:hover .btn-arrow,
+.btn-fancy:active .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Transition Curtain Overlay */
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #0a1128 0%, #05070d 100%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.transition-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Spinner Animation inside the Curtain */
+.transition-spinner {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid rgba(0, 102, 255, 0.15);
+  border-top-color: #00D4FF;
+  border-radius: 50%;
+  animation: spin 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.spinner-logo {
+  width: 45px;
+  height: auto;
+  animation: pulseLogo 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseLogo {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  100% { transform: scale(1.05); opacity: 1; }
+}

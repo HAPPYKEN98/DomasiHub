@@ -43,8 +43,8 @@
 }
 
 #profileCard .btn-danger {
-  background-color: #fd0e0e;
-  color: #fee2e2;
+  background-color: #ff0505;
+  color: #fcf9f9;
   border: 1px solid #ef4444;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -177,4 +177,24 @@
 .custom-modal-overlay.active {
   display: flex; /* Flex kicks in when active */
   opacity: 1;
+}
+
+/* Custom Sky-Blue Button Style for My Uploads */
+.btn-sky {
+ background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%);
+  color: #f4f5f7;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-sky:hover {
+  background-color: #79c6fa;
+  color: #010613;
+}
+
+.btn-sky:active {
+  transform: scale(0.98);
 }

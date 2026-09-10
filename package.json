@@ -3,8 +3,10 @@
     "dev": "npx serve app"
   },
   "dependencies": {
+    "@capacitor/browser": "^8.0.4",
     "@capacitor/ios": "^8.5.1",
-    "@capacitor/local-notifications": "^8.3.1"
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/status-bar": "^8.0.3"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.1",

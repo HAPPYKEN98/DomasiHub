@@ -1,3 +1,5 @@
+let allAccommodation = [];
+
 document.addEventListener("DOMContentLoaded", () => {
   const navWrapper = document.getElementById("portalNavWrapper");
   if (navWrapper) {
@@ -9,6 +11,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadAccommodation();
+
+  const searchInput = document.getElementById("accommodationSearchInput");
+  const searchBtn = document.getElementById("accommodationSearchBtn");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", debounce(handleSearch, 300));
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSearch();
+        searchInput.blur(); // Dismisses mobile keyboard to stop layout shifts
+      }
+    });
+  }
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      handleSearch();
+      if (searchInput) searchInput.blur();
+    });
+  }
 });
 
 function sanitizeMalawianWhatsApp(rawNumber) {
@@ -41,30 +64,41 @@ async function loadAccommodation() {
 
     if (error) throw error;
 
-    if (listings && listings.length > 0) {
-      grid.innerHTML = "";
-      listings.forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "room-card";
-        card.style.cssText =
-          "background: var(--bg-surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);";
+    allAccommodation = listings || [];
+    renderAccommodation(allAccommodation);
+  } catch (error) {
+    console.error("Failed to load accommodation:", error);
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Failed to load accommodation data.</p>`;
+  }
+}
 
-        const priceFormatted =
-          "MWK " + parseFloat(item.price || 0).toLocaleString();
-        const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
-        const imageSrc =
-          item.image_path ||
-          "https://via.placeholder.com/300x200?text=No+Image";
+function renderAccommodation(listings) {
+  const grid = document.getElementById("accommodation-grid");
+  if (!grid) return;
 
-        const whatsappMessage = encodeURIComponent(
-          "Hello, I'm interested in the hostel you listed on Domasi Hub",
-        );
+  if (listings && listings.length > 0) {
+    grid.innerHTML = "";
+    listings.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "room-card";
+      card.style.cssText =
+        "background: var(--bg-surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);";
 
-        card.innerHTML = `
+      const priceFormatted =
+        "MWK " + parseFloat(item.price || 0).toLocaleString();
+      const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
+      const imageSrc =
+        item.image_path || "https://via.placeholder.com/300x200?text=No+Image";
+
+      const whatsappMessage = encodeURIComponent(
+        "Hello, I'm interested in the hostel you listed on Domasi Hub",
+      );
+
+      card.innerHTML = `
                     <div style="background: rgba(0, 0, 0, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 4px;">
                         <img src="${imageSrc}" alt="${
-          item.title || "Accommodation"
-        }" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
+        item.title || "Accommodation"
+      }" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
                     </div>
                     <div class="product-info" style="margin-top:1rem;">
                         <h3 style="margin: 0 0 0.5rem 0;">${
@@ -88,13 +122,42 @@ async function loadAccommodation() {
                         <a href="https://wa.me/${cleanPhone}?text=${whatsappMessage}" target="_blank" class="btn-primary" style="display:block; text-align:center; text-decoration:none; padding:0.6rem; border-radius:6px; background:var(--primary-color); color:white;">Contact Landlord</a>
                     </div>
                 `;
-        grid.appendChild(card);
-      });
-    } else {
-      grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No housing units listed yet.</p>`;
-    }
-  } catch (error) {
-    console.error("Failed to load accommodation:", error);
-    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Failed to load accommodation data.</p>`;
+      grid.appendChild(card);
+    });
+  } else {
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching accommodation units found.</p>`;
   }
+}
+
+function handleSearch() {
+  const searchInput = document.getElementById("accommodationSearchInput");
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+  if (!query) {
+    renderAccommodation(allAccommodation);
+    return;
+  }
+
+  const filtered = allAccommodation.filter((item) => {
+    const title = (item.title || "").toLowerCase();
+    const location = (item.location_details || "").toLowerCase();
+    const security = (item.security_condition || "").toLowerCase();
+    const price = String(item.price || "").toLowerCase();
+    return (
+      title.includes(query) ||
+      location.includes(query) ||
+      security.includes(query) ||
+      price.includes(query)
+    );
+  });
+
+  renderAccommodation(filtered);
+}
+
+function debounce(func, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
 }

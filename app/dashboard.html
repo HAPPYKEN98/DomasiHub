@@ -1,8 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Admin Command Center | Domasi Hub</title>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
@@ -38,14 +41,8 @@
         background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
         color: #ecfdf5;
         min-height: 100vh;
-        font-family:
-          "Inter",
-          system-ui,
-          -apple-system,
-          sans-serif;
-        transition:
-          background 0.4s ease,
-          color 0.4s ease;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        transition: background 0.4s ease, color 0.4s ease;
       }
 
       body:not(.dark-theme) {
@@ -209,9 +206,7 @@
       }
 
       tr {
-        transition:
-          background 0.2s ease,
-          transform 0.2s ease;
+        transition: background 0.2s ease, transform 0.2s ease;
       }
 
       tr:hover {
@@ -289,7 +284,6 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
-
   </head>
   <body>
     <!-- Header Navigation -->
@@ -485,6 +479,7 @@
       </div>
     </main>
 
+    <script src="js/app.js" type="module"></script>
     <script src="js/theme.js"></script>
     <script>
       let rawListings = [];
@@ -545,8 +540,9 @@
           }
         }
 
-        document.getElementById("adminUser").innerHTML =
-          `👤 Admin: <strong>${currentUser.toUpperCase()}</strong>`;
+        document.getElementById(
+          "adminUser",
+        ).innerHTML = `👤 Admin: <strong>${currentUser.toUpperCase()}</strong>`;
         loadAdminDashboard();
       }
 
@@ -613,7 +609,9 @@
             posted_by: item.posted_by || "Anonymous Student",
             category: item.category || "marketplace",
             title: item.title,
-            price_or_details: `${parseFloat(item.price || 0).toLocaleString()} MWK`,
+            price_or_details: `${parseFloat(
+              item.price || 0,
+            ).toLocaleString()} MWK`,
             contact: item.contact_number || "N/A",
             isAcademic: false,
           });
@@ -625,8 +623,12 @@
             id: item.id,
             posted_by: item.uploaded_by || "Anonymous Student",
             category: "academics",
-            title: `${item.title} ${item.course_code ? "[" + item.course_code.toUpperCase() + "]" : ""}`,
-            price_or_details: `${item.department} (${item.academic_year || "Study Material"})`,
+            title: `${item.title} ${
+              item.course_code ? "[" + item.course_code.toUpperCase() + "]" : ""
+            }`,
+            price_or_details: `${item.department} (${
+              item.academic_year || "Study Material"
+            })`,
             contact: `📥 ${item.download_count} Downloads`,
             isAcademic: true,
           });
@@ -652,14 +654,24 @@
           const badgeClass = `badge-${item.category}`;
 
           tr.innerHTML = `
-                    <td><span class="uploader-tag">👤 ${escapeHTML(item.posted_by)}</span></td>
-                    <td><span class="badge ${badgeClass}">${item.category}</span></td>
+                    <td><span class="uploader-tag">👤 ${escapeHTML(
+                      item.posted_by,
+                    )}</span></td>
+                    <td><span class="badge ${badgeClass}">${
+            item.category
+          }</span></td>
                     <td><strong>${escapeHTML(item.title)}</strong></td>
                     <td>${escapeHTML(item.price_or_details)}</td>
                     <td>${escapeHTML(item.contact)}</td>
                     <td>
-                        ${!item.isAcademic ? `<button class="action-btn btn-edit" onclick="editListing(${item.id})">Edit</button>` : ""}
-                        <button class="action-btn btn-delete" onclick="deleteItem(${item.id}, ${item.isAcademic})">Delete</button>
+                        ${
+                          !item.isAcademic
+                            ? `<button class="action-btn btn-edit" onclick="editListing(${item.id})">Edit</button>`
+                            : ""
+                        }
+                        <button class="action-btn btn-delete" onclick="deleteItem(${
+                          item.id
+                        }, ${item.isAcademic})">Delete</button>
                     </td>
                 `;
           tbody.appendChild(tr);
@@ -738,7 +750,7 @@
               ">": "&gt;",
               "'": "&#39;",
               '"': "&quot;",
-            })[tag] || tag,
+            }[tag] || tag),
         );
       }
     </script>

@@ -1,5 +1,15 @@
 {
   "appId": "com.domasihub.app",
   "appName": "Domasi Hub",
-  "webDir": "app"
+  "webDir": "app",
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": false,
+      "style": "DARK",
+      "backgroundColor": "#0066ff"
+    }
+  },
+  "android": {
+    "adjustMarginsForEdgeToEdge": "auto"
+  }
 }

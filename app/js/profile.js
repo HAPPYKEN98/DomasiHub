@@ -1,3 +1,5 @@
+// profile.js
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const {
@@ -22,15 +24,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const initials = getInitials(fullName);
     const avatarSvg = generateAvatarSvg(initials);
 
-    // 1. Render Profile Card
+    // 1. Render Profile Card (Sign out button removed)
     const profileCard = document.getElementById("profileCard");
     profileCard.innerHTML = `
       <div class="profile-avatar-container">${avatarSvg}</div>
       <h2>${escapeHtml(fullName)}</h2>
-      <p class="profile-reg">${escapeHtml(p?.reg_number || "No registration number")}</p>
+      <p class="profile-reg">${escapeHtml(
+        p?.reg_number || "No registration number",
+      )}</p>
       <p>WhatsApp: ${escapeHtml(p?.whatsapp_number || "Not provided")}</p>
-      <div class="profile-actions">
-        <button class="btn-danger" id="signOutBtn">Sign out</button>
+      <div class="profile-actions" style="margin-top: 1rem;">
+        <a href="my-uploads.html" class="btn-sky" style="text-align: center; text-decoration: none; display: block;">My Uploads</a>
       </div>
     `;
 
@@ -92,12 +96,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    document
-      .getElementById("signOutBtn")
-      .addEventListener("click", async () => {
+    const signOutBtn = document.getElementById("signOutBtn");
+    if (signOutBtn) {
+      signOutBtn.addEventListener("click", async () => {
         await db.auth.signOut();
         location.href = "home.html";
       });
+    }
   } catch (err) {
     console.error("Error loading profile:", err);
     document.getElementById("profileCard").innerHTML =

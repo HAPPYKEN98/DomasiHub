@@ -1,3 +1,5 @@
+let allPrinters = [];
+
 document.addEventListener("DOMContentLoaded", () => {
   const navWrapper = document.getElementById("portalNavWrapper");
   if (navWrapper) {
@@ -9,6 +11,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadPrinters();
+
+  const searchInput = document.getElementById("printingSearchInput");
+  const searchBtn = document.getElementById("printingSearchBtn");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", debounce(handleSearch, 300));
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSearch();
+        searchInput.blur(); // Dismisses mobile keyboard to stop layout shifts
+      }
+    });
+  }
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      handleSearch();
+      if (searchInput) searchInput.blur();
+    });
+  }
 });
 
 function sanitizeMalawianWhatsApp(rawNumber) {
@@ -41,30 +64,41 @@ async function loadPrinters() {
 
     if (error) throw error;
 
-    if (listings && listings.length > 0) {
-      grid.innerHTML = "";
-      listings.forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "printer-card active";
-        card.style.cssText =
-          "background: var(--bg-surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);";
+    allPrinters = listings || [];
+    renderPrinters(allPrinters);
+  } catch (error) {
+    console.error("Failed to load printers:", error);
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Failed to load printing data.</p>`;
+  }
+}
 
-        const priceFormatted =
-          "MWK " + parseFloat(item.price || 0).toLocaleString();
-        const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
-        const imageSrc =
-          item.image_path ||
-          "https://via.placeholder.com/300x200?text=No+Image";
+function renderPrinters(listings) {
+  const grid = document.getElementById("printing-grid");
+  if (!grid) return;
 
-        const whatsappMessage = encodeURIComponent(
-          "Hello, I saw your printer listed on Domasi Hub and wanted to print an assignment",
-        );
+  if (listings && listings.length > 0) {
+    grid.innerHTML = "";
+    listings.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "printer-card active";
+      card.style.cssText =
+        "background: var(--bg-surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);";
 
-        card.innerHTML = `
+      const priceFormatted =
+        "MWK " + parseFloat(item.price || 0).toLocaleString();
+      const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
+      const imageSrc =
+        item.image_path || "https://via.placeholder.com/300x200?text=No+Image";
+
+      const whatsappMessage = encodeURIComponent(
+        "Hello, I saw your printer listed on Domasi Hub and wanted to print an assignment",
+      );
+
+      card.innerHTML = `
                     <div style="background: rgba(0, 0, 0, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 4px;">
                         <img src="${imageSrc}" alt="${
-          item.title || "Printer Station"
-        }" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
+        item.title || "Printer Station"
+      }" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
                     </div>
                     <div class="product-info" style="margin-top:1rem;">
                         <h3 style="margin: 0 0 0.5rem 0;">${
@@ -80,13 +114,38 @@ async function loadPrinters() {
                         <a href="https://wa.me/${cleanPhone}?text=${whatsappMessage}" target="_blank" class="btn-primary" style="display:block; text-align:center; text-decoration:none; padding:0.6rem; border-radius:6px; background:var(--primary-color); color:white;">Send Document</a>
                     </div>
                 `;
-        grid.appendChild(card);
-      });
-    } else {
-      grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No printer stations active yet.</p>`;
-    }
-  } catch (error) {
-    console.error("Failed to load printers:", error);
-    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Failed to load printing data.</p>`;
+      grid.appendChild(card);
+    });
+  } else {
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching printer stations found.</p>`;
   }
+}
+
+function handleSearch() {
+  const searchInput = document.getElementById("printingSearchInput");
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+  if (!query) {
+    renderPrinters(allPrinters);
+    return;
+  }
+
+  const filtered = allPrinters.filter((item) => {
+    const title = (item.title || "").toLowerCase();
+    const location = (item.location_details || "").toLowerCase();
+    const price = String(item.price || "").toLowerCase();
+    return (
+      title.includes(query) || location.includes(query) || price.includes(query)
+    );
+  });
+
+  renderPrinters(filtered);
+}
+
+function debounce(func, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
 }

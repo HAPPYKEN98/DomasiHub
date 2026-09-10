@@ -1,12 +1,10 @@
 .main-header {
-  background-color: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: #0c121e;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 5%;
+  padding: calc(1rem + env(safe-area-inset-top, 0px)) 5% 1rem 5%;
   position: sticky;
   top: 0;
   z-index: 1010;
@@ -43,11 +41,10 @@
   font-weight: 700;
   font-size: 0.95rem;
   color: #f8fafc !important;
-  background: rgba(255, 255, 255, 0.12);
+  background: #1e293b;
   border: 1px solid rgba(255, 255, 255, 0.22);
   padding: 0.4rem 0.85rem;
   border-radius: 20px;
-  backdrop-filter: blur(8px);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -183,7 +180,6 @@ body.dark-theme .moon-icon {
   box-shadow: 0 0 0 2px var(--bg-surface, #1e293b);
 }
 
-/* Hide the badge dynamically if count is 0 */
 .notification-badge.hidden {
   display: none;
 }

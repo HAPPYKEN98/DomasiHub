@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   initThemeSettings();
   initSecuritySettings();
+  initPrivacyModal();
   initAboutSettings();
 });
 
@@ -19,7 +20,6 @@ function initThemeSettings() {
       const selectedTheme = e.target.value;
       localStorage.setItem("theme", selectedTheme);
 
-      // Force the attribute update immediately
       if (selectedTheme === "system") {
         const systemDark = window.matchMedia(
           "(prefers-color-scheme: dark)",
@@ -32,7 +32,6 @@ function initThemeSettings() {
         document.documentElement.setAttribute("data-theme", selectedTheme);
       }
 
-      // Safely call applyTheme if it exists externally, without blocking DOM changes
       if (typeof applyTheme === "function") {
         try {
           applyTheme(selectedTheme);
@@ -49,6 +48,31 @@ function initSecuritySettings() {
   const passwordModal = document.getElementById("passwordModal");
   const cancelPasswordBtn = document.getElementById("cancelPasswordBtn");
   const passwordForm = document.getElementById("passwordForm");
+  const passwordSuccessModal = document.getElementById("passwordSuccessModal");
+  const closeSuccessModalBtn = document.getElementById("closeSuccessModalBtn");
+
+  const settingsWarningModal = document.getElementById("settingsWarningModal");
+  const closeWarningModalBtn = document.getElementById("closeWarningModalBtn");
+  const warningModalMessage = document.getElementById("warningModalMessage");
+
+  function showWarning(message) {
+    if (warningModalMessage) warningModalMessage.textContent = message;
+    if (settingsWarningModal) settingsWarningModal.style.display = "flex";
+  }
+
+  if (closeWarningModalBtn && settingsWarningModal) {
+    closeWarningModalBtn.addEventListener("click", () => {
+      settingsWarningModal.style.display = "none";
+    });
+  }
+
+  if (settingsWarningModal) {
+    settingsWarningModal.addEventListener("click", (e) => {
+      if (e.target === settingsWarningModal) {
+        settingsWarningModal.style.display = "none";
+      }
+    });
+  }
 
   if (changePasswordBtn && passwordModal) {
     changePasswordBtn.addEventListener("click", () => {
@@ -63,12 +87,25 @@ function initSecuritySettings() {
     });
   }
 
-  // Close modal when clicking backdrop background
   if (passwordModal) {
     passwordModal.addEventListener("click", (e) => {
       if (e.target === passwordModal) {
         passwordModal.style.display = "none";
         passwordForm.reset();
+      }
+    });
+  }
+
+  if (closeSuccessModalBtn && passwordSuccessModal) {
+    closeSuccessModalBtn.addEventListener("click", () => {
+      passwordSuccessModal.style.display = "none";
+    });
+  }
+
+  if (passwordSuccessModal) {
+    passwordSuccessModal.addEventListener("click", (e) => {
+      if (e.target === passwordSuccessModal) {
+        passwordSuccessModal.style.display = "none";
       }
     });
   }
@@ -80,12 +117,12 @@ function initSecuritySettings() {
       const confirmPassword = document.getElementById("confirmPassword").value;
 
       if (newPassword !== confirmPassword) {
-        alert("New passwords do not match.");
+        showWarning("New passwords do not match.");
         return;
       }
 
       if (newPassword.length < 6) {
-        alert("Password must be at least 6 characters long.");
+        showWarning("Password must be at least 6 characters long.");
         return;
       }
 
@@ -95,12 +132,41 @@ function initSecuritySettings() {
         });
         if (error) throw error;
 
-        alert("Password updated successfully.");
         passwordModal.style.display = "none";
         passwordForm.reset();
+
+        if (passwordSuccessModal) {
+          passwordSuccessModal.style.display = "flex";
+        }
       } catch (err) {
         console.error("Error updating password:", err);
-        alert(err.message || "Failed to update password.");
+        showWarning(err.message || "Failed to update password.");
+      }
+    });
+  }
+}
+
+function initPrivacyModal() {
+  const privacyPolicyBtn = document.getElementById("privacyPolicyBtn");
+  const privacyModal = document.getElementById("privacyModal");
+  const closePrivacyBtn = document.getElementById("closePrivacyBtn");
+
+  if (privacyPolicyBtn && privacyModal) {
+    privacyPolicyBtn.addEventListener("click", () => {
+      privacyModal.style.display = "flex";
+    });
+  }
+
+  if (closePrivacyBtn && privacyModal) {
+    closePrivacyBtn.addEventListener("click", () => {
+      privacyModal.style.display = "none";
+    });
+  }
+
+  if (privacyModal) {
+    privacyModal.addEventListener("click", (e) => {
+      if (e.target === privacyModal) {
+        privacyModal.style.display = "none";
       }
     });
   }
@@ -120,41 +186,6 @@ function initAboutSettings() {
       } catch (err) {
         console.error("Error signing out:", err);
         window.location.href = "index.html";
-      }
-    });
-  }
-}
-document.addEventListener("DOMContentLoaded", () => {
-  initThemeSettings();
-  initSecuritySettings();
-  initPrivacyModal(); // Add this line
-  initAboutSettings();
-});
-
-// ... keep your other functions ...
-
-function initPrivacyModal() {
-  const privacyPolicyBtn = document.getElementById("privacyPolicyBtn");
-  const privacyModal = document.getElementById("privacyModal");
-  const closePrivacyBtn = document.getElementById("closePrivacyBtn");
-
-  if (privacyPolicyBtn && privacyModal) {
-    privacyPolicyBtn.addEventListener("click", () => {
-      privacyModal.style.display = "flex";
-    });
-  }
-
-  if (closePrivacyBtn && privacyModal) {
-    closePrivacyBtn.addEventListener("click", () => {
-      privacyModal.style.display = "none";
-    });
-  }
-
-  // Close modal when clicking backdrop background
-  if (privacyModal) {
-    privacyModal.addEventListener("click", (e) => {
-      if (e.target === privacyModal) {
-        privacyModal.style.display = "none";
       }
     });
   }

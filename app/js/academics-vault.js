@@ -140,7 +140,7 @@ async function downloadAcademicFile(id, filename) {
 
     const { data: record, error } = await client
       .from("academic_resources")
-      .select("file_data, download_count")
+      .select("file_data, download_count, title")
       .eq("id", id)
       .single();
 
@@ -154,28 +154,14 @@ async function downloadAcademicFile(id, filename) {
       return;
     }
 
-    // Convert base64 data URL to a clean Blob object to prevent browser security warnings
-    const parts = record.file_data.split(";base64,");
-    const contentType = parts[0].split(":")[1] || "application/octet-stream";
-    const rawData = window.atob(parts[1]);
-    const uInt8Array = new Uint8Array(rawData.length);
-
-    for (let i = 0; i < rawData.length; ++i) {
-      uInt8Array[i] = rawData.charCodeAt(i);
-    }
-
-    const blob = new Blob([uInt8Array], { type: contentType });
-    const blobUrl = URL.createObjectURL(blob);
-
+    // Direct HTTP URL handover to leverage Android's native download manager
     const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename || "academic_document";
+    a.href = record.file_data;
+    a.download = filename || record.title || "academic_document";
+    a.target = "_blank";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-
-    // Clean up memory
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
     const newCount = (record.download_count || 0) + 1;
     await client

@@ -4,9 +4,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const searchInput = document.getElementById("searchInput");
   const deptFilter = document.getElementById("departmentFilter");
+  const searchBtn = document.getElementById("searchBtn");
 
-  if (searchInput)
+  if (searchInput) {
     searchInput.addEventListener("input", debounce(fetchResources, 300));
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        fetchResources();
+        searchInput.blur(); // Dismisses mobile keyboard to stop UI layout shifts
+      }
+    });
+  }
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      fetchResources();
+      if (searchInput) searchInput.blur();
+    });
+  }
+
   if (deptFilter) deptFilter.addEventListener("change", fetchResources);
 
   const modal = document.getElementById("uploadModal");
@@ -233,7 +250,6 @@ async function handleUploadSubmit(e) {
     : null;
   const originalBtnText = submitBtn ? submitBtn.innerHTML : "Upload Resource";
 
-  // Give immediate UI feedback that upload is active
   if (submitBtn) {
     submitBtn.disabled = true;
     submitBtn.style.opacity = "0.7";
@@ -247,6 +263,7 @@ async function handleUploadSubmit(e) {
     const regNumber =
       localStorage.getItem("user_reg") ||
       localStorage.getItem("regNumber") ||
+      localStorage.getItem("user_reg_number") ||
       "";
     const rawName = user.fullname || user.user_fullname;
     const formattedUploader = regNumber ? `${rawName} (${regNumber})` : rawName;
@@ -266,14 +283,32 @@ async function handleUploadSubmit(e) {
       throw new Error("File size exceeds 10MB limit.");
     }
 
-    const base64File = await convertFileToBase64(file);
+    const fileExt = file.name.split(".").pop();
+    const uniqueFileName = `${Date.now()}_${Math.random()
+      .toString(36)
+      .substring(2, 9)}.${fileExt}`;
+    const filePath = `${department
+      .toLowerCase()
+      .replace(/\s+/g, "_")}/${uniqueFileName}`;
+
+    const { error: uploadError } = await client.storage
+      .from("academic-files")
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: publicUrlData } = client.storage
+      .from("academic-files")
+      .getPublicUrl(filePath);
+
+    const filePublicUrl = publicUrlData.publicUrl;
 
     const payload = {
       title,
       department,
       academic_year,
       course_code,
-      file_data: base64File,
+      file_data: filePublicUrl,
       uploaded_by: formattedUploader,
       download_count: 0,
     };
@@ -313,6 +348,20 @@ async function downloadResource(id, filename) {
   const client = window.supabaseClient || window.db;
   if (!client) return;
 
+  const btn = document.querySelector(
+    `button[onclick*="downloadResource(${id},"]`,
+  );
+  const originalHtml = btn ? btn.innerHTML : "";
+
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+    btn.innerHTML = `
+      <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+      Downloading...
+    `;
+  }
+
   try {
     const { data: item, error } = await client
       .from("academic_resources")
@@ -324,26 +373,38 @@ async function downloadResource(id, filename) {
       throw new Error("File not found.");
     }
 
-    const parts = item.file_data.split(";base64,");
-    const contentType = parts[0].split(":")[1] || "application/octet-stream";
-    const rawData = window.atob(parts[1]);
-    const uInt8Array = new Uint8Array(rawData.length);
+    const fileUrl = item.file_data;
 
-    for (let i = 0; i < rawData.length; ++i) {
-      uInt8Array[i] = rawData.charCodeAt(i);
+    // If running inside the Capacitor native mobile app
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      // Force open in external system browser/downloader which triggers native Android download manager
+      const { Browser } = window.Capacitor.Plugins || {};
+      if (Browser) {
+        await Browser.open({ url: fileUrl });
+      } else {
+        window.open(fileUrl, "_system");
+      }
+    } else {
+      // Web browser fallback: fetch blob to force custom filename download
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      // Clean up the filename using the item title if provided
+      const cleanTitle = (filename || item.title || "document").replace(
+        /[^a-zA-Z0-9-_]/g,
+        "_",
+      );
+      const extension = fileUrl.split(".").pop().split("?")[0] || "pdf";
+      a.download = `${cleanTitle}.${extension}`;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
     }
-
-    const blob = new Blob([uInt8Array], { type: contentType });
-    const blobUrl = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename || item.title || "document";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
     const newCount = (item.download_count || 0) + 1;
     await client
@@ -353,22 +414,18 @@ async function downloadResource(id, filename) {
 
     const countElem = document.getElementById(`dl-count-${id}`);
     if (countElem) countElem.textContent = newCount;
-    showToast("Download started!", "success");
+    showToast("Download started", "success");
   } catch (err) {
     console.error("Download error:", err);
     showToast("Failed to download file.", "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btn.innerHTML = originalHtml;
+    }
   }
 }
-
-function convertFileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-}
-
 function debounce(func, delay) {
   let timeout;
   return (...args) => {

@@ -1,8 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Accommodation Directory | Domasi Hub</title>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
@@ -17,7 +20,9 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/app.js" type="module"></script>
     <script src="js/theme.js"></script>
+    <script src="js/page-transition.js" defer></script>
     <script src="js/auth-nav.js"></script>
     <script src="js/accommodation.js"></script>
   </head>
@@ -88,6 +93,78 @@
           Verified off-campus student boarding houses and rental units near
           Domasi.
         </p>
+      </section>
+
+      <section style="margin-bottom: 1.5rem; overflow-x: hidden">
+        <div
+          class="hero-search-box"
+          style="
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-sizing: border-box;
+            flex-wrap: nowrap;
+          "
+        >
+          <svg
+            class="search-input-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="flex-shrink: 0"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            id="accommodationSearchInput"
+            placeholder="Search hostels, locations, prices..."
+            aria-label="Search accommodation"
+            style="
+              flex: 1;
+              min-width: 0;
+              width: 100%;
+              border: none;
+              background: transparent;
+              outline: none;
+            "
+          />
+          <button
+            id="accommodationSearchBtn"
+            class="btn-primary"
+            style="
+              padding: 0.5rem 0.75rem;
+              border-radius: 6px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              border: none;
+              flex-shrink: 0;
+            "
+            aria-label="Search"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="width: 16px; height: 16px"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
       </section>
 
       <section class="rooms-grid" id="accommodation-grid">

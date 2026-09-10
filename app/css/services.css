@@ -1,23 +1,35 @@
 .services-gallery-main {
-  padding: 1.25rem 1rem 6rem 1rem;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 1.25rem 0 6rem 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
-.services-gallery-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+.services-carousel-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 640px) {
-  .services-gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.services-carousel-track::-webkit-scrollbar {
+  height: 6px;
+}
+
+.services-carousel-track::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.services-carousel-track::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
 
 .services-loading {
-  grid-column: 1 / -1;
+  width: 100%;
   text-align: center;
   color: var(--text-secondary, #94a3b8);
   padding: 3rem;
@@ -26,6 +38,9 @@
 
 /* Base Service Card Frame */
 .service-card {
+  flex: 0 0 82%;
+  max-width: 340px;
+  scroll-snap-align: start;
   background: var(--bg-surface, #1e293b);
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
   border-radius: 16px;
@@ -34,6 +49,12 @@
   flex-direction: column;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .service-card {
+    flex: 0 0 380px;
+  }
 }
 
 .service-card:hover {
@@ -70,7 +91,8 @@
 .agent-img-frame,
 .expert-img-frame {
   width: 100%;
-  height: 180px;
+  aspect-ratio: 4 / 5;
+  max-height: 400px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.1);
 }

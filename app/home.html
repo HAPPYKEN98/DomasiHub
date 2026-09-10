@@ -1,8 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Domasi Hub | App</title>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
@@ -110,7 +113,116 @@
     </header>
 
     <main style="padding-bottom: 0.5rem">
-      <!-- Academic Vault Moved to Top & Optimized for Mobile -->
+    
+      <section style="margin-bottom: 3.5rem">
+        <div class="latest-updates-header-box" style="margin-bottom: 1.5rem">
+          <div class="section-title" style="margin-bottom: 0">
+            <h3
+              style="
+                color: #f8fafc;
+                font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+                margin-bottom: 0.25rem;
+              "
+            >
+              Explore Campus Utilities
+            </h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin: 0">
+              Select a category to post or search listings.
+            </p>
+          </div>
+        </div>
+
+        <div class="services-grid">
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Campus Marketplace</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Buy or sell items, textbooks, electronics
+              and student essentials directly via WhatsApp networks.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Listings: <span id="marketplaceCount">0</span>
+            </p>
+            <a
+              href="marketplace.html"
+              class="btn-primary"
+              style="margin-top: auto"
+              >Explore Market</a
+            >
+          </div>
+
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Student Printing Hub</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Locate operational, student-run print configurations across campus
+              blocks
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Stations: <span id="printingCount">0</span>
+            </p>
+            <a href="printing.html" class="btn-primary" style="margin-top: auto"
+              >Find Printers</a
+            >
+          </div>
+
+          <div class="module-card">
+            <h4 style="font-size: 1.25rem">Accommodation Directory</h4>
+            <p
+              style="
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 0.5rem;
+              "
+            >
+              Browse verified off-campus rentals, student boarding complexes,
+              and bedspaces complete with direct landlord contact links.
+            </p>
+            <p
+              style="
+                font-weight: bold;
+                font-size: 0.85rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            >
+              Active Vacancies: <span id="accommodationCount">0</span>
+            </p>
+            <a
+              href="accommodation.html"
+              class="btn-primary"
+              style="margin-top: auto"
+              >View Hostels</a
+            >
+          </div>
+        </div>
+      </section>
+
+        <!-- Academic Vault Moved to Top & Optimized for Mobile -->
       <section class="academic-display-window" style="margin-bottom: 3.5rem">
         <div class="academic-window-glow"></div>
         <div class="academic-window-content">
@@ -198,7 +310,10 @@
           </div>
         </div>
 
-        <div class="academic-window-preview" style="width: 100%; max-width: 100%;">
+        <div
+          class="academic-window-preview"
+          style="width: 100%; max-width: 100%"
+        >
           <div class="preview-header">
             <span class="dot red"></span>
             <span class="dot yellow"></span>
@@ -218,105 +333,6 @@
             >
               Fetching live academic resources...
             </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Campus Utilities Section Moved Down -->
-      <section style="margin-bottom: 3.5rem">
-        <div class="latest-updates-header-box" style="margin-bottom: 1.5rem;">
-          <div class="section-title" style="margin-bottom: 0;">
-            <h3 style="color: #f8fafc; font-size: clamp(1.1rem, 3.5vw, 1.6rem); margin-bottom: 0.25rem;">Explore Campus Utilities</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Select a category to post or search listings.</p>
-          </div>
-        </div>
-
-        <div class="services-grid">
-          <div class="module-card">
-            <h4 style="font-size: 1.25rem">Campus Marketplace</h4>
-            <p
-              style="
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin-bottom: 0.5rem;
-              "
-            >
-              Buy or sell academic modules, textbooks, electronics, mattresses,
-              and student essentials directly via WhatsApp networks.
-            </p>
-            <p
-              style="
-                font-weight: bold;
-                font-size: 0.85rem;
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-              "
-            >
-              Active Listings: <span id="marketplaceCount">0</span>
-            </p>
-            <a
-              href="marketplace.html"
-              class="btn-primary"
-              style="margin-top: auto"
-              >Explore Market</a
-            >
-          </div>
-
-          <div class="module-card">
-            <h4 style="font-size: 1.25rem">Student Printing Hub</h4>
-            <p
-              style="
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin-bottom: 0.5rem;
-              "
-            >
-              Locate operational, student-run print configurations across campus
-              blocks. Upload assignment files instantly for queue printing.
-            </p>
-            <p
-              style="
-                font-weight: bold;
-                font-size: 0.85rem;
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-              "
-            >
-              Active Stations: <span id="printingCount">0</span>
-            </p>
-            <a href="printing.html" class="btn-primary" style="margin-top: auto"
-              >Find Printers</a
-            >
-          </div>
-
-          <div class="module-card">
-            <h4 style="font-size: 1.25rem">Accommodation Directory</h4>
-            <p
-              style="
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin-bottom: 0.5rem;
-              "
-            >
-              Browse verified off-campus rentals, student boarding complexes,
-              and bedspaces complete with direct landlord contact links.
-            </p>
-            <p
-              style="
-                font-weight: bold;
-                font-size: 0.85rem;
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-              "
-            >
-              Active Vacancies: <span id="accommodationCount">0</span>
-            </p>
-            <a
-              href="accommodation.html"
-              class="btn-primary"
-              style="margin-top: auto"
-              >View Hostels</a
-            >
           </div>
         </div>
       </section>
@@ -396,6 +412,8 @@
       </a>
     </nav>
 
+    <script src="js/app.js" type="module"></script>
     <script src="js/theme.js"></script>
+    <script src="js/page-transition.js" defer></script>
   </body>
 </html>

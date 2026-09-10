@@ -1,3 +1,5 @@
+let allListings = [];
+
 document.addEventListener("DOMContentLoaded", () => {
   const navWrapper = document.getElementById("portalNavWrapper");
   if (navWrapper) {
@@ -9,6 +11,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadMarketplace();
+
+  const searchInput = document.getElementById("marketplaceSearchInput");
+  const searchBtn = document.getElementById("marketplaceSearchBtn");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", debounce(handleSearch, 300));
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSearch();
+        searchInput.blur(); // Dismisses mobile keyboard to stop layout shifts
+      }
+    });
+  }
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      handleSearch();
+      if (searchInput) searchInput.blur();
+    });
+  }
 });
 
 function sanitizeMalawianWhatsApp(rawNumber) {
@@ -61,27 +84,38 @@ async function loadMarketplace() {
 
     if (error) throw error;
 
-    if (listings && listings.length > 0) {
-      grid.innerHTML = "";
-      listings.forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "product-card";
+    allListings = listings || [];
+    renderListings(allListings);
+  } catch (error) {
+    console.error("Failed to load listings:", error);
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Failed to load marketplace data.</p>`;
+  }
+}
 
-        const titleClean = formatTitle(item.title);
-        const conditionClean = cleanConditionText(item.item_condition);
+function renderListings(listings) {
+  const grid = document.getElementById("marketplace-grid");
+  if (!grid) return;
 
-        const priceFormatted =
-          "MWK " + parseFloat(item.price || 0).toLocaleString();
-        const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
-        const imageSrc =
-          item.image_path ||
-          "https://via.placeholder.com/300x200?text=No+Image";
+  if (listings && listings.length > 0) {
+    grid.innerHTML = "";
+    listings.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "product-card";
 
-        const whatsappMessage = encodeURIComponent(
-          `Hello, I'm interested in the item [${titleClean}] that you posted on Domasi Hub`,
-        );
+      const titleClean = formatTitle(item.title);
+      const conditionClean = cleanConditionText(item.item_condition);
 
-        card.innerHTML = `
+      const priceFormatted =
+        "MWK " + parseFloat(item.price || 0).toLocaleString();
+      const cleanPhone = sanitizeMalawianWhatsApp(item.contact_number);
+      const imageSrc =
+        item.image_path || "https://via.placeholder.com/300x200?text=No+Image";
+
+      const whatsappMessage = encodeURIComponent(
+        `Hello, I'm interested in the item [${titleClean}] that you posted on Domasi Hub`,
+      );
+
+      card.innerHTML = `
                     <div class="product-image" style="background: rgba(0, 0, 0, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 4px;">
                         <img src="${imageSrc}" alt="${titleClean}" style="width:100%; height:200px; object-fit:contain; border-radius:4px; display:block;">
                     </div>
@@ -92,13 +126,40 @@ async function loadMarketplace() {
                         <a href="https://wa.me/${cleanPhone}?text=${whatsappMessage}" target="_blank" class="btn-primary btn-marketplace" style="display:block; text-align:center; text-decoration:none; margin-top:0.75rem; padding:0.6rem;">Chat on WhatsApp</a>
                     </div>
                 `;
-        grid.appendChild(card);
-      });
-    } else {
-      grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No items listed yet.</p>`;
-    }
-  } catch (error) {
-    console.error("Failed to load listings:", error);
-    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: red;">Failed to load marketplace data.</p>`;
+      grid.appendChild(card);
+    });
+  } else {
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching items found.</p>`;
   }
+}
+
+function handleSearch() {
+  const searchInput = document.getElementById("marketplaceSearchInput");
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+  if (!query) {
+    renderListings(allListings);
+    return;
+  }
+
+  const filtered = allListings.filter((item) => {
+    const title = (item.title || "").toLowerCase();
+    const condition = (item.item_condition || "").toLowerCase();
+    const price = String(item.price || "").toLowerCase();
+    return (
+      title.includes(query) ||
+      condition.includes(query) ||
+      price.includes(query)
+    );
+  });
+
+  renderListings(filtered);
+}
+
+function debounce(func, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
 }

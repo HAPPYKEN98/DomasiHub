@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Welcome | Domasi Hub</title>
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230066FF'/><stop offset='100%' stop-color='%2300D4FF'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230F172A'/><path d='M 12 6 C 22 6 26 11 26 16 C 26 21 22 26 12 26 L 7 26 L 7 6 Z' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='16' x2='18' y2='16' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/><circle cx='18' cy='16' r='2.5' fill='%2300D4FF'/></svg>"
+  />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/header-nav.css" />
+  <link rel="stylesheet" href="css/welcome.css" />
+  <link rel="manifest" href="manifest.json" />
+  <script src="js/welcome.js" defer></script>
+</head>
+<body>
+  <!-- Smooth Loading Transition Overlay -->
+  <div id="pageTransitionOverlay" class="transition-overlay">
+    <div class="transition-spinner">
+      <div class="spinner-ring"></div>
+      <img src="assets/logo.svg" alt="Domasi Hub" class="spinner-logo" />
+    </div>
+  </div>
+
+  <!-- Animated Background Elements -->
+  <div class="bg-particles">
+    <span class="particle p1"></span>
+    <span class="particle p2"></span>
+    <span class="particle p3"></span>
+    <span class="particle p4"></span>
+    <span class="particle p5"></span>
+  </div>
+
+  <main class="welcome-container">
+    <div class="welcome-brand">
+      <img src="assets/logo.svg" alt="Domasi Hub" class="welcome-logo" />
+    </div>
+
+    <div class="welcome-actions">
+      <a href="home.html" class="btn-fancy btn-get-started" data-transition="true">
+        <span>Get Started</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+
+      <a href="signup.html" class="btn-fancy btn-signup">
+        <span>Create Account</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7" r="4"></circle>
+          <line x1="20" y1="8" x2="20" y2="11"></line>
+          <line x1="23" y1="11" x2="17" y2="11"></line>
+        </svg>
+      </a>
+
+      <a href="signin.html" class="btn-fancy btn-signin">
+        <span>Sign In</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

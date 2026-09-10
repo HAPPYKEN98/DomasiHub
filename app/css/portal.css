@@ -1,3 +1,18 @@
+.portal-container {
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 1.5rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .portal-container {
+    padding: 2.5rem 2rem;
+    margin: 2.5rem auto;
+  }
+}
+
 .hub-modal-form {
   display: flex;
   flex-direction: column;
