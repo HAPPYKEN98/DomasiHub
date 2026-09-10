@@ -1,0 +1,8 @@
+[build]
+  publish = "app"
+
+[[redirects]]
+  from = "/*"
+  to = "/:splat.html"
+  status = 200
+  force = false
