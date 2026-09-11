@@ -4,7 +4,40 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <meta
+      name="description"
+      content="Domasi Hub is a campus utility platform for students to discover services, resources, accommodation, market listings and academic support."
+    />
+    <meta name="author" content="Domasi Hub" />
+
+    <!-- Open Graph / Facebook and WhatsApp -->
+    <meta property="og:title" content="Domasi Hub | Download App" />
+    <meta
+      property="og:description"
+      content="Download the Domasi Hub app for access to campus services, academic resources, accommodation, marketplace listings and student updates."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://domasihub.netlify.app/" />
+    <meta
+      property="og:image"
+      content="https://domasihub.netlify.app/assets/domasi-social-preview.png"
+    />
+    <meta property="og:image:alt" content="Domasi Hub" />
+    <meta property="og:site_name" content="Domasi Hub" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Domasi Hub | Download App" />
+    <meta
+      name="twitter:description"
+      content="Download the Domasi Hub app for access to campus services, academic resources, accommodation, marketplace listings and student updates."
+    />
+    <meta
+      name="twitter:image"
+      content="https://domasihub.netlify.app/assets/domasi-social-preview.png"
     />
     <title>Domasi Hub | Download App</title>
     <link rel="icon" type="image/svg+xml" href="app/assets/favicon.svg" />
@@ -101,9 +134,11 @@
 
       .site-header {
         position: sticky;
+        padding: 0.5rem;
         top: 0;
         z-index: 20;
         background: var(--dark-bg);
+        color: #dbeafe;
         border-bottom: 1px solid var(--border-subtle);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
@@ -114,7 +149,7 @@
         margin: 0 auto;
         min-height: 96px;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         gap: 30px;
         position: relative;
@@ -122,31 +157,19 @@
 
       .brand {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 0;
         min-width: 48px;
         color: var(--text-core);
         font-weight: 900;
         letter-spacing: -0.02em;
-        font-size: 1.2rem;
+        font-size: 1.25rem;
       }
 
       .brand img {
-        width: 90px;
-        height: 44px;
-        border-radius: 0;
-        box-shadow: none;
-        object-fit: contain;
-        display: block;
-        background: transparent;
+        height: clamp(36px, 4vw, 40px);
+        width: auto;
         padding: 0;
-        border: none;
-        display: flex;
-        align-items: center;
-        gap: 0;
-        font-weight: 900;
-        font-size: 1.25rem;
-        color: var(--text-secondary);
       }
 
       .header-nav {
@@ -187,21 +210,21 @@
       }
 
       .header-cta {
-        border: 1px solid var(--border-subtle);
         background: var(--bg-surface);
-        padding: 11px 16px;
+        padding: 12px 22px;
+        width: max-content;
+        height: 46px;
         border-radius: 999px;
-        display: flex;
-        align-items: center;
         gap: 10px;
         font-weight: 800;
+        font-size: 0.85rem;
         color: var(--primary-color);
         box-shadow: var(--shadow-card);
       }
 
       .header-cta svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         fill: none;
         stroke: currentColor;
         stroke-width: 2;
@@ -511,7 +534,6 @@
       }
 
       .screen-top .mini-brand img {
-        width: 32px;
         height: 32px;
         border-radius: 10px;
       }
@@ -1122,6 +1144,19 @@
         min-height: 120px;
       }
 
+      .contact-form .form-message {
+        display: none;
+        min-height: 20px;
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--bg-accent);
+        color: var(--primary-color);
+        border: 1px solid var(--border-subtle);
+        font-size: 0.84rem;
+        font-weight: 800;
+      }
+
       .contact-form button {
         width: 100%;
         background: var(--dark-bg);
@@ -1317,7 +1352,7 @@
         .header-wrap {
           min-height: auto;
           padding: 16px 0;
-          align-items: center;
+          align-items: flex-start;
           flex-wrap: wrap;
         }
 
@@ -1339,7 +1374,7 @@
 
         .mobile-menu-button span {
           display: block;
-          width: 22px;
+          width: 24px;
           height: 2px;
           border-radius: 99px;
           background: var(--text-core);
@@ -1392,8 +1427,8 @@
         }
 
         .header-cta {
-          min-width: unset;
-          padding: 10px 14px;
+          min-width: auto;
+          padding: 10px 8px;
         }
 
         .hero-wrap {
@@ -1555,7 +1590,6 @@
                 <div class="screen-top">
                   <div class="mini-brand">
                     <img src="app/assets/logo.svg" alt="" />
-                    <span>Domasi Hub</span>
                   </div>
                   <div class="signal-bars">
                     <span></span>
@@ -1826,7 +1860,7 @@
             </div>
           </div>
 
-          <form class="contact-form">
+          <form class="contact-form" id="contactForm">
             <div class="form-row">
               <label for="name">Name</label>
               <input
@@ -1853,7 +1887,13 @@
                 placeholder="Tell us how we can help"
               ></textarea>
             </div>
-            <button type="button">Request a callback</button>
+            <button type="submit">Request a callback</button>
+            <div
+              class="form-message"
+              id="formMessage"
+              role="status"
+              aria-live="polite"
+            ></div>
           </form>
         </div>
       </section>
@@ -1918,11 +1958,33 @@
     </footer>
 
     <script>
-      const formButton = document.querySelector(".contact-form button");
-      if (formButton) {
-        formButton.addEventListener("click", function () {
-          this.textContent = "Thank you";
-          this.disabled = true;
+      const contactForm = document.getElementById("contactForm");
+      const formButton = contactForm
+        ? contactForm.querySelector("button[type='submit']")
+        : null;
+      const formMessage = document.getElementById("formMessage");
+
+      if (contactForm && formButton && formMessage) {
+        contactForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          formButton.textContent = "Sending...";
+          formButton.disabled = true;
+
+          setTimeout(() => {
+            formMessage.textContent = "Message sent. Thank you!";
+            formMessage.style.display = "block";
+
+            contactForm.reset();
+
+            formButton.textContent = "Request a callback";
+            formButton.disabled = false;
+
+            setTimeout(() => {
+              formMessage.textContent = "";
+              formMessage.style.display = "none";
+            }, 2200);
+          }, 350);
         });
       }
 

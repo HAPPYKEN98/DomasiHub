@@ -41,5 +41,4 @@ android/app/.cxx/
 android/.local/
 ios/DerivedData/
 ios/Pods/
-*.apk
 *.aab
