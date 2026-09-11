@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
+    />
+    <title>Domasi Hub | Download App</title>
+    <link rel="icon" type="image/svg+xml" href="app/assets/favicon.svg" />
+    <style>
+      :root {
+        --bg-canvas: #f8fafc;
+        --bg-surface: #ffffff;
+        --bg-panel: #ffffff;
+        --bg-accent: #eef4ff;
+        --text-core: #0f172a;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-subtle: rgba(15, 23, 42, 0.08);
+        --input-fill: #ffffff;
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --secondary-color: #64748b;
+        --dark-bg: #0f172a;
+        --accent-green: #10b981;
+        --glass-bg: rgba(15, 23, 42, 0.85);
+        --shadow-soft: 0 24px 80px rgba(37, 99, 235, 0.12);
+        --shadow-card: 0 14px 40px rgba(15, 23, 42, 0.08);
+        --font-ui: "Inter", "Segoe UI", "Roboto", Arial, sans-serif;
+        --font-display: "Inter", "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-ui);
+        color: var(--text-core);
+        background: radial-gradient(
+            circle at 70% 8%,
+            rgba(37, 99, 235, 0.08),
+            transparent 14%
+          ),
+          radial-gradient(
+            circle at 15% 100%,
+            rgba(16, 185, 129, 0.08),
+            transparent 16%
+          ),
+          var(--bg-canvas);
+        min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        background: rgba(37, 99, 235, 0.08);
+        pointer-events: none;
+        animation: drift 8s ease-in-out infinite alternate;
+        z-index: -1;
+      }
+
+      body::before {
+        width: 320px;
+        height: 320px;
+        left: -120px;
+        top: -80px;
+      }
+
+      body::after {
+        width: 420px;
+        height: 420px;
+        right: -160px;
+        top: 320px;
+        background: rgba(16, 185, 129, 0.08);
+        animation-duration: 10s;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: var(--dark-bg);
+        border-bottom: 1px solid var(--border-subtle);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      .header-wrap {
+        width: min(1200px, calc(100vw - 48px));
+        margin: 0 auto;
+        min-height: 96px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+        position: relative;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        min-width: 48px;
+        color: var(--text-core);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        font-size: 1.2rem;
+      }
+
+      .brand img {
+        width: 90px;
+        height: 44px;
+        border-radius: 0;
+        box-shadow: none;
+        object-fit: contain;
+        display: block;
+        background: transparent;
+        padding: 0;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        font-weight: 900;
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+      }
+
+      .header-nav {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+      }
+
+      .header-nav a {
+        position: relative;
+        transition: color 260ms ease;
+        font-weight: 800;
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+      }
+
+      .header-nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        height: 3px;
+        width: 100%;
+        background: var(--primary-color);
+        border-radius: 2px;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 260ms ease;
+      }
+
+      .header-nav a:hover {
+        color: var(--primary-color);
+      }
+
+      .header-nav a:hover::after {
+        transform: scaleX(1);
+      }
+
+      .header-cta {
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-surface);
+        padding: 11px 16px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        color: var(--primary-color);
+        box-shadow: var(--shadow-card);
+      }
+
+      .header-cta svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+      }
+
+      .hero-section {
+        position: relative;
+        padding: 50px 0 34px;
+        min-height: 560px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .hero-wrap {
+        width: min(1200px, calc(100vw - 48px));
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(520px, 1fr) minmax(380px, 0.92fr);
+        align-items: center;
+        gap: 42px;
+      }
+
+      .hero-copy {
+        max-width: 620px;
+        animation: riseUp 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--bg-accent);
+        color: var(--primary-color);
+        border: 1px solid var(--border-subtle);
+        font-size: 0.82rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+
+      .kicker svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+      }
+
+      .hero-copy h1 {
+        margin: 0 0 20px;
+        font-family: var(--font-display);
+        font-size: clamp(3.3rem, 5vw, 4.8rem);
+        line-height: 1.05;
+        font-weight: 900;
+        color: var(--text-core);
+        letter-spacing: -0.055em;
+        max-width: 650px;
+      }
+
+      .hero-copy h1 .gradient-text {
+        display: inline-block;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          #00b8ff,
+          var(--accent-green)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero-copy .hero-subtitle {
+        max-width: 600px;
+        margin: 0 0 24px;
+        color: var(--text-secondary);
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        line-height: 1.8;
+      }
+
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .download-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-hover)
+        );
+        color: #fff;
+        border-radius: 999px;
+        padding: 14px 26px;
+        font-weight: 900;
+        font-size: 0.98rem;
+        letter-spacing: 0.02em;
+        box-shadow: var(--shadow-soft);
+        min-width: 210px;
+        justify-content: center;
+        transition: transform 300ms ease, box-shadow 300ms ease,
+          background 300ms ease;
+      }
+
+      .download-button svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .download-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 26px 50px rgba(37, 99, 235, 0.34);
+      }
+
+      .secondary-button {
+        background: var(--bg-surface);
+        color: var(--text-core);
+        border: 1px solid var(--border-subtle);
+        border-radius: 999px;
+        padding: 13px 24px;
+        font-weight: 800;
+        font-size: 0.96rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 160px;
+        justify-content: center;
+        transition: border-color 280ms ease, transform 280ms ease,
+          background 280ms ease;
+      }
+
+      .secondary-button svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+      }
+
+      .secondary-button:hover {
+        background: var(--bg-accent);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+      }
+
+      .hero-proof {
+        margin-top: 32px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .hero-proof .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        border-left: 1px solid var(--border-subtle);
+        padding-left: 16px;
+      }
+
+      .hero-proof .stat:first-child {
+        border-left: none;
+        padding-left: 0;
+      }
+
+      .hero-proof .stat strong {
+        font-size: 1.6rem;
+        color: var(--text-core);
+      }
+
+      .hero-proof .stat span {
+        color: var(--text-secondary);
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .hero-visual {
+        position: relative;
+        min-height: 530px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1200px;
+        animation: riseUp 1100ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .hero-visual::before {
+        content: "";
+        position: absolute;
+        width: 460px;
+        height: 460px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(37, 99, 235, 0.15),
+          transparent 70%
+        );
+        border: 1px solid rgba(37, 99, 235, 0.16);
+        filter: blur(8px);
+        animation: pulseOrb 4s ease-in-out infinite;
+      }
+
+      .app-device {
+        position: relative;
+        width: min(380px, 84vw);
+        min-height: 530px;
+        border-radius: 34px;
+        background: linear-gradient(180deg, var(--dark-bg), #091425);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 14px;
+        box-shadow: var(--shadow-soft);
+        transform: rotate(6deg);
+        animation: floatApp 4.5s ease-in-out infinite;
+        overflow: hidden;
+      }
+
+      .app-device::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 34px;
+        background: linear-gradient(
+          125deg,
+          rgba(255, 255, 255, 0.16),
+          transparent,
+          rgba(37, 99, 235, 0.1)
+        );
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask: linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        padding: 1px;
+        pointer-events: none;
+      }
+
+      .screen {
+        background: radial-gradient(
+            circle at 80% 20%,
+            rgba(16, 185, 129, 0.16),
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 50% 80%,
+            rgba(37, 99, 235, 0.3),
+            transparent 35%
+          ),
+          var(--dark-bg);
+        border-radius: 26px;
+        min-height: 500px;
+        padding: 22px 16px;
+        color: #eaf2ff;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .screen::before {
+        content: "";
+        position: absolute;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        left: -140px;
+        top: -80px;
+        box-shadow: inset 0 0 80px rgba(37, 99, 235, 0.2);
+        animation: spinIn 10s linear infinite;
+      }
+
+      .screen-top {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .screen-top .mini-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 900;
+        font-size: 0.88rem;
+        color: #eaf2ff;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .screen-top .mini-brand img {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+      }
+
+      .signal-bars {
+        display: flex;
+        align-items: end;
+        gap: 4px;
+        height: 18px;
+      }
+
+      .signal-bars span {
+        display: block;
+        width: 4px;
+        border-radius: 2px;
+        background: rgba(234, 242, 255, 0.9);
+      }
+
+      .signal-bars span:nth-child(1) {
+        height: 4px;
+      }
+      .signal-bars span:nth-child(2) {
+        height: 7px;
+      }
+      .signal-bars span:nth-child(3) {
+        height: 11px;
+      }
+      .signal-bars span:nth-child(4) {
+        height: 15px;
+      }
+
+      .app-card-panel {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(8px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 18px;
+        position: relative;
+        z-index: 2;
+        margin-top: 16px;
+      }
+
+      .app-card-panel h3 {
+        margin: 0 0 12px;
+        color: #eefaff;
+        font-size: 1.3rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+      }
+
+      .app-card-panel p {
+        margin: 0 0 16px;
+        color: #cbd5e1;
+        font-size: 0.86rem;
+        line-height: 1.7;
+      }
+
+      .app-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .app-card-grid .metric-cell {
+        padding: 14px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .metric-cell .metric-icon {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.12);
+        color: #87f7d0;
+        border: 1px solid rgba(16, 185, 129, 0.24);
+      }
+
+      .metric-icon svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+      }
+
+      .metric-cell strong {
+        color: #eaf2ff;
+        font-size: 0.95rem;
+      }
+
+      .metric-cell span {
+        color: var(--text-muted);
+        font-size: 0.76rem;
+      }
+
+      .app-floating-card {
+        position: absolute;
+        z-index: 3;
+        right: -10px;
+        top: 70px;
+        background: var(--bg-surface);
+        color: var(--text-core);
+        border-radius: 24px;
+        padding: 12px 14px;
+        box-shadow: var(--shadow-card);
+        width: 180px;
+        border: 1px solid var(--border-subtle);
+        animation: bob 3s ease-in-out infinite;
+      }
+
+      .app-floating-card .card-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-weight: 900;
+        font-size: 0.86rem;
+        color: var(--text-core);
+      }
+
+      .app-floating-card .card-title svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: var(--accent-green);
+        stroke-width: 2;
+      }
+
+      .app-floating-card .card-title .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent-green);
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+      }
+
+      .floating-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 12px;
+        font-size: 0.76rem;
+        color: var(--text-secondary);
+      }
+
+      .floating-list .line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 10px;
+        width: 90%;
+        background: var(--border-subtle);
+        border-radius: 99px;
+      }
+
+      .floating-list .line:nth-child(2) {
+        width: 70%;
+      }
+
+      .floating-list .line:nth-child(3) {
+        width: 80%;
+      }
+
+      .hero-glass {
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.08);
+        border: 1px solid var(--border-subtle);
+        filter: blur(0.4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        left: -30px;
+        bottom: -40px;
+        animation: driftFloat 3.5s ease-in-out infinite;
+      }
+
+      .hero-glass svg {
+        width: 80px;
+        height: 80px;
+        fill: none;
+        stroke: var(--primary-color);
+        stroke-width: 2;
+      }
+
+      .section {
+        width: min(1200px, calc(100vw - 48px));
+        margin: 0 auto;
+        padding: 56px 0;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+
+      .section-heading .eyebrow {
+        color: var(--primary-color);
+        font-size: 0.82rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .section-heading h2 {
+        font-size: clamp(2.2rem, 3vw, 3rem);
+        line-height: 1.2;
+        font-weight: 900;
+        color: var(--text-core);
+        letter-spacing: -0.035em;
+        margin: 0;
+      }
+
+      .section-heading .section-summary {
+        color: var(--text-secondary);
+        max-width: 460px;
+        font-size: 1rem;
+        line-height: 1.8;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: minmax(420px, 1fr) minmax(420px, 1fr);
+        gap: 32px;
+        align-items: stretch;
+      }
+
+      .about-copy {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 30px;
+        padding: 30px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .about-copy p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.8;
+        margin: 0 0 16px;
+      }
+
+      .about-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .about-list .feature-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text-core);
+        font-weight: 800;
+        font-size: 0.92rem;
+      }
+
+      .feature-row svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: var(--primary-color);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .about-visual {
+        position: relative;
+        background: linear-gradient(
+            140deg,
+            rgba(37, 99, 235, 0.95),
+            rgba(16, 185, 129, 0.9)
+          ),
+          var(--bg-surface);
+        border-radius: 30px;
+        min-height: 420px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-card);
+        color: #fff;
+        isolation: isolate;
+      }
+
+      .about-visual::before,
+      .about-visual::after {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        inset: auto;
+        animation: spinIn 12s linear infinite;
+      }
+
+      .about-visual::before {
+        width: 380px;
+        height: 380px;
+        left: -140px;
+        top: -80px;
+      }
+
+      .about-visual::after {
+        width: 280px;
+        height: 280px;
+        right: -80px;
+        bottom: -60px;
+        animation-direction: reverse;
+      }
+
+      .about-feature-map {
+        position: relative;
+        z-index: 2;
+        width: min(330px, 80%);
+        min-height: 320px;
+        border-radius: 30px;
+        background: rgba(9, 20, 37, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .about-feature-map svg {
+        width: 150px;
+        height: 150px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.4;
+        color: #eaf2ff;
+        margin-bottom: 14px;
+      }
+
+      .about-feature-map h3 {
+        color: #ffffff;
+        font-size: 1.8rem;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        margin: 0;
+        text-align: center;
+      }
+
+      .about-feature-map p {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      .team-section {
+        padding: 68px 0 34px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(190px, 1fr));
+        gap: 22px;
+        margin-top: 15px;
+      }
+
+      .person-card {
+        background: var(--bg-surface);
+        border-radius: 24px;
+        border: 1px solid var(--border-subtle);
+        overflow: hidden;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        transition: transform 300ms ease, box-shadow 300ms ease,
+          border-color 300ms ease;
+        min-height: 330px;
+      }
+
+      .person-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 24px 50px rgba(37, 99, 235, 0.12);
+        border-color: var(--primary-color);
+      }
+
+      .person-photo {
+        min-height: 190px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 255, 255, 0.16),
+            transparent
+          ),
+          linear-gradient(135deg, var(--primary-color), var(--accent-green));
+        position: relative;
+        isolation: isolate;
+        border-bottom: 1px solid var(--border-subtle);
+        overflow: hidden;
+      }
+
+      .person-photo::before,
+      .person-photo::after {
+        content: "";
+        position: absolute;
+        width: 110%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.7);
+        transform: rotate(-12deg);
+        top: 40%;
+      }
+
+      .person-photo::after {
+        transform: rotate(12deg);
+        top: 56%;
+      }
+
+      .person-avatar {
+        position: relative;
+        width: 118px;
+        height: 118px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.98);
+        border: 4px solid rgba(255, 255, 255, 0.88);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2);
+        overflow: hidden;
+        z-index: 2;
+      }
+
+      .person-avatar svg {
+        width: 75%;
+        height: 75%;
+        fill: none;
+        stroke: var(--primary-color);
+        stroke-width: 1.35;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .person-card .person-info {
+        padding: 18px 20px 22px;
+        background: var(--bg-surface);
+        flex: 1;
+      }
+
+      .person-info h3 {
+        margin: 0 0 8px;
+        font-size: 1.04rem;
+        line-height: 1.3;
+        letter-spacing: -0.015em;
+        color: var(--text-core);
+      }
+
+      .person-info .role {
+        color: var(--primary-color);
+        font-weight: 900;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 0 0 8px;
+      }
+
+      .person-info .summary {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.84rem;
+        line-height: 1.6;
+      }
+
+      .contact-section {
+        background: var(--bg-surface);
+        border-radius: 34px;
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-card);
+        padding: 50px 40px;
+        display: grid;
+        grid-template-columns: minmax(420px, 1fr) minmax(340px, 0.85fr);
+        gap: 30px;
+        align-items: center;
+      }
+
+      .contact-copy h2 {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        color: var(--text-core);
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        margin: 0 0 16px;
+      }
+
+      .contact-copy p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.8;
+        max-width: 620px;
+        margin: 0 0 24px;
+      }
+
+      .contact-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .contact-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--primary-color);
+        font-weight: 900;
+        font-size: 0.94rem;
+        padding: 11px 14px;
+        border-radius: 14px;
+        background: var(--bg-accent);
+        border: 1px solid var(--border-subtle);
+        transition: transform 260ms ease, background 260ms ease;
+      }
+
+      .contact-links a:hover {
+        transform: translateY(-3px);
+        background: var(--bg-surface);
+      }
+
+      .contact-links svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+      }
+
+      .contact-form {
+        background: var(--bg-canvas);
+        border: 1px solid var(--border-subtle);
+        border-radius: 24px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 280px;
+      }
+
+      .contact-form .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .contact-form label {
+        font-weight: 800;
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        width: 100%;
+        border-radius: 14px;
+        background: var(--bg-surface);
+        color: var(--text-core);
+        border: 1px solid var(--border-subtle);
+        padding: 12px 14px;
+        font-family: var(--font-ui);
+        outline: none;
+        font-size: 0.92rem;
+        transition: border-color 200ms ease, box-shadow 200ms ease;
+      }
+
+      .contact-form input:focus,
+      .contact-form textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+      }
+
+      .contact-form textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .contact-form button {
+        width: 100%;
+        background: var(--dark-bg);
+        color: #fff;
+        border-radius: 14px;
+        border: none;
+        padding: 14px 22px;
+        font-family: var(--font-ui);
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition: transform 280ms ease, background 280ms ease;
+      }
+
+      .contact-form button:hover {
+        background: var(--primary-color);
+        transform: translateY(-3px);
+      }
+
+      .privacy-section {
+        width: min(1200px, calc(100vw - 48px));
+        margin: 0 auto;
+        padding: 54px 0 80px;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .privacy-card {
+        background: var(--bg-surface);
+        border-radius: 30px;
+        border: 1px solid var(--border-subtle);
+        padding: 30px;
+        box-shadow: var(--shadow-card);
+      }
+
+      .privacy-card h2 {
+        font-size: clamp(2rem, 2.5vw, 2.6rem);
+        font-weight: 900;
+        line-height: 1.3;
+        letter-spacing: -0.035em;
+        color: var(--text-core);
+        margin: 0 0 16px;
+      }
+
+      .privacy-card p {
+        font-size: 0.96rem;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin: 0 0 16px;
+      }
+
+      .privacy-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(160px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .privacy-list .privacy-item {
+        background: var(--bg-accent);
+        border-radius: 18px;
+        padding: 16px;
+        border: 1px solid var(--border-subtle);
+      }
+
+      .privacy-item strong {
+        display: block;
+        color: var(--text-core);
+        font-weight: 900;
+        font-size: 0.84rem;
+        margin-bottom: 8px;
+      }
+
+      .privacy-item span {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        line-height: 1.6;
+      }
+
+      .site-footer {
+        background: var(--dark-bg);
+        color: #dbeafe;
+        padding: 50px 0 60px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .site-footer::before {
+        content: "";
+        position: absolute;
+        left: -80px;
+        top: -120px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.1);
+        filter: blur(50px);
+      }
+
+      .footer-wrap {
+        width: min(1200px, calc(100vw - 48px));
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 900;
+        color: #fff;
+        font-size: 1.08rem;
+        letter-spacing: -0.02em;
+      }
+
+      .footer-brand img {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #07111c 0%, #101b2c 100%);
+        border: 1px solid var(--border-subtle);
+        padding: 3px;
+        object-fit: contain;
+      }
+
+      .footer-brand .footer-copy {
+        color: #dbeafe;
+        font-size: 0.88rem;
+        white-space: nowrap;
+      }
+
+      .footer-links {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        color: #bfd2ef;
+        font-size: 0.86rem;
+        font-weight: 700;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: #bfd2ef;
+        transition: color 280ms ease;
+      }
+
+      .footer-links a:hover {
+        color: #fff;
+      }
+
+      @media (max-width: 1040px) {
+        .hero-wrap,
+        .about-grid,
+        .contact-section {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-section {
+          padding-top: 34px;
+        }
+
+        .hero-copy {
+          max-width: 100%;
+        }
+
+        .hero-copy h1 {
+          max-width: 100%;
+        }
+
+        .hero-visual {
+          min-height: 420px;
+        }
+
+        .team-grid {
+          grid-template-columns: repeat(2, minmax(210px, 1fr));
+        }
+
+        .privacy-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .mobile-menu-button {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .header-wrap {
+          min-height: auto;
+          padding: 16px 0;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .mobile-menu-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          gap: 5px;
+          width: 44px;
+          height: 44px;
+          background: var(--bg-surface);
+          border-radius: 14px;
+          border: 1px solid var(--border-subtle);
+          box-shadow: var(--shadow-card);
+          cursor: pointer;
+          margin-left: auto;
+        }
+
+        .mobile-menu-button span {
+          display: block;
+          width: 22px;
+          height: 2px;
+          border-radius: 99px;
+          background: var(--text-core);
+          transition: transform 280ms ease, opacity 280ms ease;
+        }
+
+        .mobile-menu-button[aria-expanded="true"] span:nth-child(1) {
+          transform: translateY(7px) rotate(45deg);
+        }
+
+        .mobile-menu-button[aria-expanded="true"] span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .mobile-menu-button[aria-expanded="true"] span:nth-child(3) {
+          transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .header-nav {
+          display: none;
+          width: 100%;
+          gap: 12px;
+          flex-wrap: wrap;
+          flex-direction: column;
+          align-items: stretch;
+          border: 1px solid var(--border-subtle);
+          border-radius: 20px;
+          padding: 16px;
+          background: var(--bg-surface);
+          box-shadow: var(--shadow-card);
+          position: absolute;
+          top: calc(100% + 8px);
+          left: 0;
+          right: 0;
+          z-index: 30;
+        }
+
+        .header-nav.is-open {
+          display: flex;
+        }
+
+        .header-nav a {
+          padding: 10px 12px;
+          border-radius: 10px;
+          background: var(--bg-accent);
+        }
+
+        .header-nav a::after {
+          display: none;
+        }
+
+        .header-cta {
+          min-width: unset;
+          padding: 10px 14px;
+        }
+
+        .hero-wrap {
+          width: min(100vw, calc(100vw - 28px));
+          gap: 26px;
+        }
+
+        .hero-copy h1 {
+          font-size: clamp(2.7rem, 12vw, 3rem);
+        }
+
+        .hero-wrap,
+        .section,
+        .privacy-section {
+          width: min(100vw, calc(100vw - 28px));
+        }
+
+        .hero-copy {
+          width: 100%;
+        }
+
+        .app-device {
+          transform: rotate(0deg);
+        }
+
+        .hero-proof {
+          gap: 16px;
+        }
+
+        .hero-proof .stat {
+          border-left: none;
+          padding-left: 0;
+        }
+
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-heading {
+          align-items: start;
+        }
+
+        .contact-section {
+          padding: 24px 16px;
+        }
+
+        .footer-wrap {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-wrap">
+        <a class="brand" href="#home" aria-label="Domasi Hub">
+          <img src="app/assets/logo.svg" alt="Domasi Hub logo" />
+        </a>
+
+        <nav class="header-nav" id="siteHeaderNav">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <a
+          class="header-cta"
+          href="https://domasihub.netlify.app/DomasiHub.apk"
+          download="DomasiHub.apk"
+          aria-label="Download Domasi Hub APK"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v13"></path>
+            <path d="M5 19l7 7 7-7"></path>
+          </svg>
+          Download APK
+        </a>
+
+        <button
+          class="mobile-menu-button"
+          aria-label="Open navigation"
+          aria-controls="siteHeaderNav"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-section" id="home">
+        <div class="hero-wrap">
+          <section class="hero-copy">
+            <div class="kicker">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 11l8-8 8 8"></path>
+                <path d="M6 14l6-6 6 6"></path>
+                <path d="M7 18h10"></path>
+              </svg>
+              Campus utility platform
+            </div>
+            <h1>
+              Download the <span class="gradient-text">Domasi Hub</span> app for
+              Android
+            </h1>
+            <p class="hero-subtitle">
+              Access campus resources, discover services, browse listings, and
+              connect with your college community through one modern student
+              experience.
+            </p>
+
+            <div class="hero-actions">
+              <a
+                class="download-button"
+                href="https://domasihub.netlify.app/DomasiHub.apk"
+                download="DomasiHub.apk"
+                aria-label="Download the Domasi Hub Android APK"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 15.5V7.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8"></path>
+                  <path d="M8 20h8"></path>
+                  <path d="M12 4v10"></path>
+                  <path d="M7 15l5 5 5-5"></path>
+                </svg>
+                Download APK
+              </a>
+              <a class="secondary-button" href="#about">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 6h.01"></path>
+                  <path d="M12 12h.01"></path>
+                  <path d="M12 18h.01"></path>
+                </svg>
+                Learn more
+              </a>
+            </div>
+
+            <div class="hero-proof">
+              <div class="stat">
+                <strong>01</strong>
+                <span>Campus OS</span>
+              </div>
+              <div class="stat">
+                <strong>24/7</strong>
+                <span>Community Access</span>
+              </div>
+              <div class="stat">
+                <strong>4+</strong>
+                <span>Core Modules</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="hero-visual" aria-label="Domasi Hub app preview">
+            <div class="app-device">
+              <div class="screen">
+                <div class="screen-top">
+                  <div class="mini-brand">
+                    <img src="app/assets/logo.svg" alt="" />
+                    <span>Domasi Hub</span>
+                  </div>
+                  <div class="signal-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+
+                <div class="app-card-panel">
+                  <h3>Today’s Campus Flow</h3>
+                  <p>
+                    Marketplace, accommodation, academic library and services in
+                    one connected dashboard.
+                  </p>
+                  <div class="app-card-grid">
+                    <div class="metric-cell">
+                      <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M3 7h7l3-3 3 3h5v11H3z"></path>
+                        </svg>
+                      </span>
+                      <strong>Marketplace</strong>
+                      <span>Listings</span>
+                    </div>
+                    <div class="metric-cell">
+                      <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M4 19L12 3l8 16H4z"></path>
+                        </svg>
+                      </span>
+                      <strong>Academics</strong>
+                      <span>Vault</span>
+                    </div>
+                    <div class="metric-cell">
+                      <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M5 20V10"></path>
+                          <path d="M12 2l7 8"></path>
+                          <path d="M12 2l-7 8"></path>
+                          <path d="M3 20h18"></path>
+                        </svg>
+                      </span>
+                      <strong>Services</strong>
+                      <span>Campus</span>
+                    </div>
+                    <div class="metric-cell">
+                      <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path
+                            d="M3 11l9-8 9 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                          ></path>
+                        </svg>
+                      </span>
+                      <strong>Residence</strong>
+                      <span>Guide</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="app-floating-card">
+              <div class="card-title">
+                <span class="dot"></span>
+                <span>Domasi Live</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 14s4-4 8 0 8 0 8 0"></path>
+                  <path d="M4 19s4-4 8 0 8 0 8 0"></path>
+                </svg>
+              </div>
+              <div class="floating-list">
+                <span class="line"></span>
+                <span class="line"></span>
+                <span class="line"></span>
+              </div>
+            </div>
+
+            <div class="hero-glass">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 10 10"></path>
+                <path d="M12 2a10 10 0 0 1 10 10"></path>
+                <path
+                  d="M14 8a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0v-4a4 4 0 0 0-4-4z"
+                ></path>
+              </svg>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="section" id="about">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">About Domasi Hub</span>
+            <h2>One digital campus companion.</h2>
+          </div>
+          <div class="section-summary">
+            Domasi Hub brings students, educators, vendors, and service
+            providers into a shared campus operating system for discovery,
+            communication, and delivery.
+          </div>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-copy">
+            <p>
+              Domasi Hub is designed to help students find what they need
+              quickly: accommodation ideas, academic resources, marketplace
+              deals, service contacts, printing support, and student notices
+              from the campus community.
+            </p>
+            <p>
+              The app gives every user a smarter way to move through university
+              life by combining resource discovery, content publishing, partner
+              services, and personalized campus updates in a single mobile-first
+              experience.
+            </p>
+
+            <div class="about-list">
+              <div class="feature-row">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12l4 4L19  -?" />
+                </svg>
+                <span>Resource discovery for the modern student.</span>
+              </div>
+              <div class="feature-row">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12l4 4L19  -?" />
+                </svg>
+                <span>Campus marketplace and accommodation visibility.</span>
+              </div>
+              <div class="feature-row">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12l4 4L19  -?" />
+                </svg>
+                <span>Academic access, printing and service coordination.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-visual">
+            <div class="about-feature-map">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-9 9z"></path>
+                <path d="M12 3a9 9 0 0 0 9 9"></path>
+                <path d="M12 21a9 9 0 0 0-9-9"></path>
+                <path d="M6 10h12"></path>
+                <path d="M8 14h8"></path>
+                <path d="M10 18h4"></path>
+              </svg>
+              <h3>Campus Flow</h3>
+              <p>
+                Connect resources, people and services through an adaptive
+                campus information flow.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section team-section">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">People</span>
+            <h2>Domasi Hub Leadership</h2>
+          </div>
+          <div class="section-summary">
+            A multidisciplinary team building community operations, product,
+            technology and campus growth.
+          </div>
+        </div>
+
+        <div class="team-grid">
+          <article class="person-card">
+            <div class="person-photo">
+              <div class="person-avatar">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4 20a8 8 0 0 1 16 0"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="person-info">
+              <div class="role">Co-founder</div>
+              <h3>Craig Mzumara</h3>
+              <p class="summary">Frontend and Lead UI/UX Engineer</p>
+            </div>
+          </article>
+
+          <article class="person-card">
+            <div class="person-photo">
+              <div class="person-avatar">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4 20a8 8 0 0 1 16 0"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="person-info">
+              <div class="role">Co-founder</div>
+              <h3>Eden Nyirenda</h3>
+              <p class="summary">Lead and Backend Engineer</p>
+            </div>
+          </article>
+
+          <article class="person-card">
+            <div class="person-photo">
+              <div class="person-avatar">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4 20a8 8 0 0 1 16 0"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="person-info">
+              <div class="role">Co-founder</div>
+              <h3>Madalitso Msosa</h3>
+              <p class="summary">Lead QA Engineer and Product Owner</p>
+            </div>
+          </article>
+
+          <article class="person-card">
+            <div class="person-photo">
+              <div class="person-avatar">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4 20a8 8 0 0 1 16 0"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="person-info">
+              <div class="role">Co-founder</div>
+              <h3>Wisdom Kapatamoyo</h3>
+              <p class="summary">Head of Marketing & Campus Operations</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="contact-section" id="contact">
+          <div class="contact-copy">
+            <span class="eyebrow">Contact</span>
+            <h2>Ask about the campus network.</h2>
+            <p>
+              Plan a partnership, announce a campus service, request a feature,
+              or learn how Domasi Hub can support your college operations and
+              student community.
+            </p>
+
+            <div class="contact-links">
+              <a href="mailto:domasihub.gmail.com">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 5h16v14H4z"></path>
+                  <path d="M4 7l8 7 8-7"></path>
+                </svg>
+                domasihub.gmail.com
+              </a>
+              <a href="tel:+265995389665">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M5 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2.4 2C10 20 4 14 4 8a2 2 0 0 1 1-2z"
+                  ></path>
+                </svg>
+                +265 995 389 665
+              </a>
+            </div>
+          </div>
+
+          <form class="contact-form">
+            <div class="form-row">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your name"
+              />
+            </div>
+            <div class="form-row">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div class="form-row">
+              <label for="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Tell us how we can help"
+              ></textarea>
+            </div>
+            <button type="button">Request a callback</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="privacy-section" id="privacy" hidden>
+        <div class="privacy-card">
+          <h2>Privacy Policy</h2>
+          <p>
+            Domasi Hub is built to serve students and campus communities with
+            care. We collect only the minimum information needed to operate
+            accounts, publish listings, manage services, and provide secure
+            campus resources.
+          </p>
+          <p>
+            Student information, service provider details, listing contact data,
+            and uploaded resources are handled with appropriate privacy
+            controls, secure storage, and permission-aware access.
+          </p>
+
+          <div class="privacy-list">
+            <div class="privacy-item">
+              <strong>Account Care</strong>
+              <span
+                >Accounts are created safely and verified for campus
+                relevance.</span
+              >
+            </div>
+            <div class="privacy-item">
+              <strong>Data Use</strong>
+              <span
+                >Information is used to power services, listings and platform
+                updates.</span
+              >
+            </div>
+            <div class="privacy-item">
+              <strong>Contact Safety</strong>
+              <span
+                >Users should review listing and service contact messages
+                carefully.</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <div class="footer-brand">
+          <span class="footer-copy"
+            >© 2026 Domasi Hub. All Rights Reserved.</span
+          >
+        </div>
+
+        <div class="footer-links">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <a href="#privacy">Privacy Policy</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const formButton = document.querySelector(".contact-form button");
+      if (formButton) {
+        formButton.addEventListener("click", function () {
+          this.textContent = "Thank you";
+          this.disabled = true;
+        });
+      }
+
+      const mobileMenuButton = document.querySelector(".mobile-menu-button");
+      const siteHeaderNav = document.getElementById("siteHeaderNav");
+      if (mobileMenuButton && siteHeaderNav) {
+        mobileMenuButton.addEventListener("click", () => {
+          const nextState =
+            mobileMenuButton.getAttribute("aria-expanded") === "true"
+              ? "false"
+              : "true";
+          mobileMenuButton.setAttribute("aria-expanded", nextState);
+          siteHeaderNav.classList.toggle("is-open");
+        });
+      }
+
+      const privacySection = document.getElementById("privacy");
+      const privacyLinks = Array.from(
+        document.querySelectorAll('a[href="#privacy"]'),
+      );
+      for (const link of privacyLinks) {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (!privacySection) return;
+          privacySection.hidden = !privacySection.hidden;
+          if (!privacySection.hidden) {
+            privacySection.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
