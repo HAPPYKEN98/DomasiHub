@@ -1,13 +1,8 @@
 [build]
-  publish = "."
-
-[[headers]]
-  for = "/*.apk"
-  [headers.values]
-    Content-Type = "application/vnd.android.package-archive"
+  publish = "app"
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/:splat.html"
   status = 200
   force = false
