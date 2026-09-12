@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           form.style.display = form.style.display === "none" ? "flex" : "none";
         });
 
-      // Handle mail dispatch targeting craigmzumaraofficial@gmail.com using logged-in user email
+      // Handle mail dispatch targeting domasihub@gmail.com using logged-in user email
       document.getElementById("sendReportBtn").addEventListener("click", () => {
         const msg = document.getElementById("reportMessage").value.trim();
         if (!msg) {
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const body = encodeURIComponent(
           `Sender Account Email: ${loggedInEmail}\n\nIssue Details:\n${msg}`,
         );
-        window.location.href = `mailto:craigmzumaraofficial@gmail.com?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:domasihub@gmail.com?subject=${subject}&body=${body}`;
       });
     }
 
