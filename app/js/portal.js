@@ -65,6 +65,58 @@ function sanitizeMalawianWhatsApp(rawNumber) {
   return cleaned;
 }
 
+// Client-side image compressor to prevent blowing up Supabase free tier storage limits
+async function compressImage(file, maxWidth = 1200, quality = 0.7) {
+  if (!file || !file.type.startsWith("image/")) return file;
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error("Canvas compression failed"));
+              return;
+            }
+            const compressedFile = new File([blob], file.name, {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
+          "image/jpeg",
+          quality,
+        );
+      };
+
+      img.onerror = (error) => reject(error);
+    };
+
+    reader.onerror = (error) => reject(error);
+  });
+}
+
 // Custom styled modal alert helper with guaranteed high z-index and visibility
 function showPortalAlert(message, callback) {
   let alertOverlay = document.getElementById("portalCustomAlert");
@@ -138,7 +190,11 @@ function showPortalAlert(message, callback) {
 
 async function uploadImageToSupabase(file) {
   if (!file || file.size === 0) return "";
-  const fileExt = file.name.split(".").pop();
+
+  // Compress image before running upload to minimize storage consumption
+  const processedFile = await compressImage(file, 1200, 0.7);
+
+  const fileExt = processedFile.name.split(".").pop();
   const fileName = `${Date.now()}-${Math.random()
     .toString(36)
     .substring(2)}.${fileExt}`;
@@ -148,7 +204,7 @@ async function uploadImageToSupabase(file) {
 
   const { error: uploadError } = await client.storage
     .from("listings-bucket")
-    .upload(filePath, file);
+    .upload(filePath, processedFile);
 
   if (uploadError) {
     throw new Error("Image Upload Failed: " + uploadError.message);
@@ -220,7 +276,7 @@ async function handleFormSubmit(e, category) {
       category: category,
       title: titleText,
       price: parseFloat(formData.get("price")) || 0,
-      contact_number: sanitizedContact || "265000000000", // Fallback if contact is not strictly required by some forms
+      contact_number: sanitizedContact || "265000000000",
       image_path: imageUrl,
       item_condition: formData.get("item_condition") || "",
       security_condition: formData.get("security_condition") || "",
@@ -231,7 +287,6 @@ async function handleFormSubmit(e, category) {
       posted_by: postedByFormatted,
     };
 
-    // Include user_id if retrieved
     if (userId) {
       payload.user_id = userId;
     }
@@ -250,7 +305,6 @@ async function handleFormSubmit(e, category) {
 
     console.log("Listing inserted successfully:", insertData);
 
-    // Trigger real-time notification in bulletins table
     const categoryNameFormatted =
       category === "airtel_money"
         ? "Airtel Money Agent"
@@ -292,7 +346,6 @@ async function handleFormSubmit(e, category) {
       if (activeModal) {
         activeModal.classList.remove("active");
       }
-      // Optional: reload page to display new entry
       window.location.reload();
     });
   } catch (error) {

@@ -156,8 +156,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  // Helper to extract bucket path and delete associated storage file
+  async function deleteAssociatedFile(item) {
+    // Check if the item has an image or file path property
+    const fileUrl = item.image_path || item.file_path || item.file_url;
+    if (!fileUrl) return;
+
+    // Check buckets used in your project (e.g., listings-bucket or academic buckets)
+    const buckets = ["listings-bucket", "academic-bucket", "resources"];
+
+    for (const bucketName of buckets) {
+      if (fileUrl.includes(`/${bucketName}/`)) {
+        const urlParts = fileUrl.split(`/${bucketName}/`);
+        if (urlParts.length > 1) {
+          const filePath = urlParts[1];
+          const { error: storageError } = await client.storage
+            .from(bucketName)
+            .remove([filePath]);
+
+          if (storageError) {
+            console.warn(
+              `Failed to delete file from ${bucketName} (non-fatal):`,
+              storageError.message,
+            );
+          } else {
+            console.log(
+              `Successfully removed file from storage bucket: ${filePath}`,
+            );
+          }
+          break;
+        }
+      }
+    }
+  }
+
   async function executeDeleteFallback(type, id) {
     if (!confirm("Are you sure you want to delete this item?")) return;
+
+    const item = allUserUploads.find((u) => u.id == id && u._type === type);
+    if (item) {
+      await deleteAssociatedFile(item);
+    }
 
     const { data, error } = await client
       .from(type)
@@ -191,6 +230,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     confirmDeleteBtn.addEventListener("click", async () => {
       if (!itemToDelete) return;
       const { type, id } = itemToDelete;
+
+      const item = allUserUploads.find((u) => u.id == id && u._type === type);
+      if (item) {
+        await deleteAssociatedFile(item);
+      }
 
       const { data, error } = await client
         .from(type)
