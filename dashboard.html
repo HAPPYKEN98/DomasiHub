@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Admin Command Center | Domasi Hub</title>
+    <link rel="stylesheet" href="app/css/variables.css" />
+    <link rel="stylesheet" href="app/css/base.css" />
+    <link rel="stylesheet" href="app/css/header-nav.css" />
+    <link rel="stylesheet" href="app/css/components.css" />
+    <link rel="stylesheet" href="app/css/academic-window.css" />
+    <link rel="stylesheet" href="app/css/mobile-nav.css" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230066FF'/><stop offset='100%' stop-color='%2300D4FF'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230F172A'/><path d='M 12 6 C 22 6 26 11 26 16 C 26 21 22 26 12 26 L 7 26 L 7 6 Z' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='16' x2='18' y2='16' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/><circle cx='18' cy='16' r='2.5' fill='%2300D4FF'/></svg>"
+    />
+    <style>
+      /* Modern Emerald Dashboard Specific Styling */
+      :root {
+        --dashboard-bg-light: #f0fdf4;
+        --dashboard-card-light: #ffffff;
+        --dashboard-text-light: #064e3b;
+        --dashboard-border-light: rgba(16, 185, 129, 0.2);
+        --dashboard-accent: #10b981;
+        --dashboard-accent-dark: #059669;
+        --dashboard-glow: rgba(16, 185, 129, 0.25);
+      }
+
+      body.dark-theme {
+        --dashboard-bg-dark: #022c22;
+        --dashboard-card-dark: #064e3b;
+        --dashboard-text-dark: #ecfdf5;
+        --dashboard-border-dark: rgba(52, 211, 153, 0.25);
+      }
+
+      body {
+        background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+        color: #ecfdf5;
+        min-height: 100vh;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        transition: background 0.4s ease, color 0.4s ease;
+      }
+
+      body:not(.dark-theme) {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        color: #064e3b;
+      }
+
+      /* Glassmorphism Header */
+      .admin-header {
+        background: rgba(6, 78, 59, 0.6);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--dashboard-border-light);
+        padding: 1rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      body:not(.dark-theme) .admin-header {
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      /* Animations */
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.96) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 28px rgba(16, 185, 129, 0.6);
+        }
+      }
+
+      .animated-card {
+        animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      /* Stats Section */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(52, 211, 153, 0.3);
+        border-radius: 16px;
+        padding: 1.25rem;
+        backdrop-filter: blur(8px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      body:not(.dark-theme) .stat-card {
+        background: rgba(255, 255, 255, 0.85);
+        border-color: rgba(16, 185, 129, 0.25);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-4px);
+        animation: pulseGlow 2s infinite;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #34d399;
+        margin-top: 0.2rem;
+      }
+
+      body:not(.dark-theme) .stat-value {
+        color: #059669;
+      }
+
+      /* Filter Tabs */
+      .dashboard-tabs {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        color: inherit;
+        padding: 0.6rem 1.2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: all 0.25s ease;
+      }
+
+      .tab-btn.active,
+      .tab-btn:hover {
+        background: #10b981;
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+        transform: translateY(-1px);
+      }
+
+      /* Admin Table Styling */
+      .admin-table-wrapper {
+        background: rgba(2, 44, 34, 0.75);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        border: 1px solid rgba(52, 211, 153, 0.3);
+        overflow-x: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      body:not(.dark-theme) .admin-table-wrapper {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(16, 185, 129, 0.25);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      th,
+      td {
+        padding: 1.1rem;
+        border-bottom: 1px solid rgba(52, 211, 153, 0.15);
+      }
+
+      th {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      body:not(.dark-theme) th {
+        color: #064e3b;
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      tr {
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+
+      tr:hover {
+        background: rgba(16, 185, 129, 0.08);
+      }
+
+      /* Badges & Actions */
+      .badge {
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+      }
+
+      .badge-marketplace {
+        background: #0284c7;
+        color: white;
+      }
+      .badge-printing {
+        background: #9333ea;
+        color: white;
+      }
+      .badge-accommodation {
+        background: #059669;
+        color: white;
+      }
+      .badge-academics {
+        background: #d97706;
+        color: white;
+      }
+      .badge-service {
+        background: #148a7b;
+        color: white;
+      }
+      .badge-expert {
+        background: #c084fc;
+        color: white;
+      }
+      .badge-agent-service {
+        background: #2563eb;
+        color: white;
+      }
+      .badge-repair {
+        background: #f97316;
+        color: white;
+      }
+      .badge-tailor {
+        background: #ec4899;
+        color: white;
+      }
+
+      .uploader-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-weight: 700;
+        color: #10b981;
+      }
+
+      body:not(.dark-theme) .uploader-tag {
+        color: #047857;
+      }
+
+      .action-btn {
+        padding: 0.45rem 0.9rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        margin-right: 0.25rem;
+      }
+
+      .btn-edit {
+        background: #f59e0b;
+        color: #000;
+      }
+      .btn-delete {
+        background: #ef4444;
+        color: #fff;
+      }
+      .btn-logout {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      /* Transition overlay matching app behavior */
+      .transition-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 44, 34, 0.82);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 6000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 360ms ease, visibility 360ms ease;
+      }
+
+      .transition-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .transition-spinner {
+        width: min(180px, calc(100vw - 2rem));
+        height: min(180px, calc(100vw - 2rem));
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(52, 211, 153, 0.6);
+        box-shadow: 0 16px 60px rgba(0, 0, 0, 0.45);
+        background: rgba(6, 78, 59, 0.86);
+      }
+
+      .transition-spinner .spinner-ring {
+        width: 43px;
+        height: 43px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #34d399;
+        animation: spin 750ms linear infinite;
+      }
+
+      .transition-spinner .spinner-logo {
+        width: 50px;
+        height: 50px;
+        margin-top: 0.75rem;
+      }
+
+      /* --- Dashboard-native modal and admin auth styling --- */
+      .dashboard-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 5000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(2, 44, 34, 0.78);
+        backdrop-filter: blur(5px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 260ms ease, visibility 260ms ease;
+      }
+
+      .dashboard-loader.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .dashboard-loader .loader-card {
+        width: min(260px, calc(100vw - 2rem));
+        padding: 1.4rem;
+        border-radius: 24px;
+        border: 1px solid rgba(52, 211, 153, 0.6);
+        background: rgba(6, 78, 59, 0.88);
+        color: #ecfdf5;
+        text-align: center;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      }
+
+      .dashboard-loader .loader-card img {
+        width: 56px;
+        height: 56px;
+        display: block;
+        margin: 0 auto 1rem;
+      }
+
+      .dashboard-loader .loader-card .spinner-ring {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.24);
+        border-top-color: #34d399;
+        margin: 0 auto 1rem;
+        animation: spin 740ms linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .admin-modal-backdrop,
+      .admin-delete-modal-backdrop,
+      .admin-edit-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 44, 34, 0.72);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 4000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 260ms ease, visibility 260ms ease;
+      }
+
+      .admin-modal-backdrop.active,
+      .admin-delete-modal-backdrop.active,
+      .admin-edit-modal-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .admin-modal-card,
+      .admin-delete-modal-card,
+      .admin-edit-modal-card {
+        width: min(520px, calc(100vw - 2rem));
+        background: var(--dashboard-card-light, #071b17);
+        color: var(--dashboard-text-light, #ecfdf5);
+        border-radius: 24px;
+        border: 1px solid var(--dashboard-border-light, rgba(52, 211, 153, 0.4));
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+        padding: 1.25rem;
+        position: relative;
+      }
+
+      body:not(.dark-theme) .admin-modal-card,
+      body:not(.dark-theme) .admin-delete-modal-card,
+      body:not(.dark-theme) .admin-edit-modal-card {
+        background: #ffffff;
+        color: #064e3b;
+      }
+
+      .admin-modal-card {
+        width: min(420px, calc(100vw - 2rem));
+      }
+
+      .admin-modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(52, 211, 153, 0.22);
+        padding-bottom: 0.85rem;
+        margin-bottom: 1rem;
+      }
+
+      .admin-modal-head h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--dashboard-accent, #10b981);
+      }
+
+      .admin-close {
+        background: transparent;
+        color: inherit;
+        border: none;
+        font-size: 1.4rem;
+        line-height: 1;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      .admin-close:hover {
+        background: rgba(52, 211, 153, 0.12);
+      }
+
+      .admin-form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        margin-bottom: 0.95rem;
+      }
+
+      .admin-form-field label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: inherit;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .admin-form-field input,
+      .admin-form-field select,
+      .admin-form-field textarea {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(52, 211, 153, 0.32);
+        background: rgba(255, 255, 255, 0.08);
+        color: inherit;
+        padding: 0.78rem 0.9rem;
+        font: inherit;
+        outline: none;
+        transition: border-color 260ms ease, box-shadow 260ms ease,
+          background 260ms ease;
+      }
+
+      body:not(.dark-theme) .admin-form-field input,
+      body:not(.dark-theme) .admin-form-field select,
+      body:not(.dark-theme) .admin-form-field textarea {
+        background: #eefcf6;
+        color: #064e3b;
+      }
+
+      .admin-form-field input:focus,
+      .admin-form-field select:focus,
+      .admin-form-field textarea:focus {
+        border-color: var(--dashboard-accent, #10b981);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+      }
+
+      .admin-form-field textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .admin-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .admin-modal-submit,
+      .admin-modal-cancel {
+        padding: 0.72rem 1.1rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.84rem;
+        cursor: pointer;
+      }
+
+      .admin-modal-submit {
+        border: none;
+        background: var(--dashboard-accent, #10b981);
+        color: #ffffff;
+      }
+
+      .admin-modal-cancel {
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        background: transparent;
+        color: inherit;
+      }
+
+      .admin-danger {
+        background: #ef4444;
+        color: #fff;
+      }
+
+      .admin-login-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .admin-login-brand img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      .admin-login-brand span {
+        font-weight: 800;
+        font-size: 1rem;
+        color: var(--dashboard-accent, #10b981);
+        letter-spacing: 0.08em;
+      }
+
+      @media (max-width: 768px) {
+        .admin-header {
+          align-items: flex-start;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .admin-header > div:last-child {
+          width: 100%;
+        }
+
+        .admin-header .logo {
+          flex-wrap: wrap;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .dashboard-tabs {
+          width: 100%;
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          scrollbar-width: thin;
+        }
+
+        .tab-btn {
+          white-space: nowrap;
+        }
+
+        .admin-table-wrapper {
+          border-radius: 14px;
+        }
+
+        th,
+        td {
+          padding: 0.8rem;
+        }
+
+        .admin-form-actions {
+          justify-content: stretch;
+          flex-wrap: wrap;
+        }
+
+        .admin-form-actions button {
+          flex: 1 1 auto;
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app/js/supabase-client.js"></script>
+  </head>
+  <body>
+    <!-- Header Navigation -->
+    <header class="admin-header">
+      <div
+        class="logo"
+        style="display: flex; align-items: center; gap: 0.75rem"
+      >
+        <a href="home.html" class="logo-link">
+          <img
+            src="app/assets/logo.svg"
+            alt="Domasi Hub Logo"
+            class="header-logo-img"
+          />
+        </a>
+        <span style="font-weight: 800; font-size: 1.1rem; color: #10b981"
+          >ADMIN COMMAND CENTER</span
+        >
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem">
+        <span id="adminUser" class="uploader-tag">🛡️ Authenticating...</span>
+
+        <!-- Sun/Moon Theme Switch Pill -->
+        <div class="theme-switch-wrapper">
+          <button
+            id="themeToggle"
+            class="theme-toggle-btn"
+            aria-label="Toggle Dark Mode"
+          >
+            <span class="toggle-track">
+              <span class="toggle-thumb">
+                <svg
+                  class="sun-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="4" />
+                  <path
+                    d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                  />
+                </svg>
+                <svg
+                  class="moon-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              </span>
+            </span>
+          </button>
+        </div>
+
+        <button class="action-btn btn-logout" onclick="logout()">
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <main
+      class="admin-container"
+      style="max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem"
+    >
+      <!-- Live Performance Stat Cards -->
+      <div class="stats-grid">
+        <div class="stat-card animated-card" style="animation-delay: 0.05s">
+          <div
+            style="
+              font-size: 0.85rem;
+              font-weight: 600;
+              text-transform: uppercase;
+            "
+          >
+            Total Portal Uploads
+          </div>
+          <div id="statTotal" class="stat-value">0</div>
+        </div>
+        <div class="stat-card animated-card" style="animation-delay: 0.1s">
+          <div
+            style="
+              font-size: 0.85rem;
+              font-weight: 600;
+              text-transform: uppercase;
+            "
+          >
+            Marketplace Goods
+          </div>
+          <div id="statMarket" class="stat-value">0</div>
+        </div>
+        <div class="stat-card animated-card" style="animation-delay: 0.15s">
+          <div
+            style="
+              font-size: 0.85rem;
+              font-weight: 600;
+              text-transform: uppercase;
+            "
+          >
+            Academic Documents
+          </div>
+          <div id="statAcademic" class="stat-value">0</div>
+        </div>
+        <div class="stat-card animated-card" style="animation-delay: 0.2s">
+          <div
+            style="
+              font-size: 0.85rem;
+              font-weight: 600;
+              text-transform: uppercase;
+            "
+          >
+            Printers & Lodgings
+          </div>
+          <div id="statServices" class="stat-value">0</div>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        "
+      >
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" onclick="filterDashboard('all', this)">
+            🌐 All Uploads
+          </button>
+          <button
+            class="tab-btn"
+            onclick="filterDashboard('marketplace', this)"
+          >
+            🛒 Marketplace
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('academics', this)">
+            📚 Academic Vault
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('printing', this)">
+            🖨️ Print Hub
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('service', this)">
+            🛠️ Service
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('expert', this)">
+            💡 Skills Expertise
+          </button>
+          <button
+            class="tab-btn"
+            onclick="filterDashboard('airtel_money', this)"
+          >
+            📲 Airtel Money
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('tnm_mpamba', this)">
+            📡 TNM Mpamba
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('repair', this)">
+            🔧 Repair
+          </button>
+          <button class="tab-btn" onclick="filterDashboard('tailor', this)">
+            ✂️ Tailor / Craft
+          </button>
+          <button
+            class="tab-btn"
+            onclick="filterDashboard('accommodation', this)"
+          >
+            🏠 Hostels
+          </button>
+        </div>
+
+        <button
+          class="action-btn btn-edit"
+          style="padding: 0.6rem 1.2rem; border-radius: 20px"
+          onclick="loadAdminDashboard()"
+        >
+          🔄 Sync Live Data
+        </button>
+      </div>
+
+      <!-- Animated Data Table -->
+      <div
+        class="admin-table-wrapper animated-card"
+        style="animation-delay: 0.25s"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Posted / Shared By</th>
+              <th>Category</th>
+              <th>Title / Document Name</th>
+              <th>Details / Price</th>
+              <th>Contact / Info</th>
+              <th>Moderation Actions</th>
+            </tr>
+          </thead>
+          <tbody id="listingsTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 3rem">
+                Fetching combined database uploads...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script src="app/js/app.js" type="module"></script>
+    <script src="app/js/theme.js"></script>
+    <script>
+      let rawListings = [];
+      let rawAcademics = [];
+      let currentFilter = "all";
+
+      const allowedAdmins = {
+        craig: "admin",
+        eden: "admin",
+        msosa: "admin",
+        wisdom: "admin",
+      };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        checkAdminAccess();
+      });
+
+      function showDashboardLoader(
+        message = "Syncing records from Supabase...",
+      ) {
+        let loader = document.getElementById("dashboardLoader");
+        if (!loader) {
+          loader = document.createElement("div");
+          loader.id = "dashboardLoader";
+          loader.className = "dashboard-loader";
+          loader.innerHTML = `
+            <div class="loader-card">
+              <div class="spinner-ring"></div>
+              <img src="app/assets/logo.svg" alt="Domasi Hub" />
+              <div class="loader-copy">${escapeHTML(message)}</div>
+            </div>
+          `;
+          document.body.appendChild(loader);
+        }
+        const copy = loader.querySelector(".loader-copy");
+        if (copy) copy.textContent = message;
+        loader.classList.add("active");
+      }
+
+      function hideDashboardLoader() {
+        const loader = document.getElementById("dashboardLoader");
+        if (loader) loader.classList.remove("active");
+      }
+
+      function showDashboardAlert(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${escapeHTML(message)}</span>`;
+        toast.style.cssText = `position:fixed;right:20px;top:80px;z-index:7000;background:rgba(6,78,59,0.96);color:#ecfdf5;border-left:4px solid ${
+          type === "error" ? "#ef4444" : "#10b981"
+        };padding:12px 16px;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.25);font-weight:700;max-width:340px;`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateY(-8px)";
+          setTimeout(() => toast.remove(), 260);
+        }, 2600);
+      }
+
+      function buildAdminLoginModal() {
+        let modal = document.getElementById("adminLoginModalBackdrop");
+        if (modal) return modal;
+
+        modal = document.createElement("div");
+        modal.id = "adminLoginModalBackdrop";
+        modal.className = "admin-modal-backdrop active";
+        modal.innerHTML = `
+          <div class="admin-modal-card">
+            <div class="admin-modal-head">
+              <div class="admin-login-brand">
+                <img src="app/assets/logo.svg" alt="Domasi Hub">
+                <span>Domasi Hub Admin</span>
+              </div>
+              <button class="admin-close" type="button" aria-label="Close admin login panel">×</button>
+            </div>
+            <form id="adminLoginForm">
+              <div class="admin-form-field">
+                <label for="adminUsername">Admin Username</label>
+                <input id="adminUsername" name="adminUsername" autocomplete="username" placeholder="Enter your admin username" required />
+              </div>
+              <div class="admin-form-field">
+                <label for="adminPassword">Admin Password</label>
+                <input id="adminPassword" name="adminPassword" type="password" autocomplete="current-password" placeholder="Enter your admin password" required />
+              </div>
+              <div class="admin-form-actions">
+                <button type="button" class="admin-modal-cancel" id="cancelAdminLogin">Back</button>
+                <button type="submit" class="admin-modal-submit">Enter Dashboard</button>
+              </div>
+            </form>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelector(".admin-close").addEventListener("click", () => {
+          window.location.href = "app/home.html";
+        });
+        modal
+          .querySelector("#cancelAdminLogin")
+          .addEventListener("click", () => {
+            window.location.href = "app/home.html";
+          });
+
+        const form = modal.querySelector("#adminLoginForm");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const username = modal
+            .querySelector("#adminUsername")
+            .value.trim()
+            .toLowerCase();
+          const password = modal.querySelector("#adminPassword").value.trim();
+          if (
+            !allowedAdmins[username] ||
+            password !== allowedAdmins[username]
+          ) {
+            showDashboardAlert("Access Denied: Invalid credentials", "error");
+            return;
+          }
+          sessionStorage.setItem("adminUsername", username);
+          sessionStorage.setItem("isAdminLoggedIn", "true");
+          modal.classList.remove("active");
+          modal.style.display = "none";
+          checkAdminAccess(false);
+        });
+
+        return modal;
+      }
+
+      async function checkAdminAccess(shouldShowLogin = true) {
+        let currentUser = (sessionStorage.getItem("adminUsername") || "")
+          .toLowerCase()
+          .trim();
+        let isLoggedIn = sessionStorage.getItem("isAdminLoggedIn") === "true";
+
+        if (!isLoggedIn || !allowedAdmins[currentUser]) {
+          if (shouldShowLogin) {
+            const modal = buildAdminLoginModal();
+            modal.classList.add("active");
+            modal.style.display = "flex";
+            return;
+          }
+          window.location.href = "app/home.html";
+          return;
+        }
+
+        const safeName = String(currentUser || "UNKNOWN").toUpperCase();
+        document.getElementById(
+          "adminUser",
+        ).innerHTML = `👤 Admin: <strong>${safeName}</strong>`;
+        loadAdminDashboard();
+      }
+
+      async function loadAdminDashboard() {
+        const tbody = document.getElementById("listingsTableBody");
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2.5rem;">Syncing records from Supabase...</td></tr>`;
+        showDashboardLoader();
+
+        try {
+          if (!window.db || !window.db.from) {
+            throw new Error("Supabase client is not available.");
+          }
+
+          const [listingsRes, academicsRes] = await Promise.all([
+            window.db
+              .from("listings")
+              .select("*")
+              .order("id", { ascending: false }),
+            window.db
+              .from("academic_resources")
+              .select("*")
+              .order("id", { ascending: false }),
+          ]);
+
+          if (listingsRes.error) throw listingsRes.error;
+          if (academicsRes.error) throw academicsRes.error;
+
+          rawListings = Array.isArray(listingsRes.data) ? listingsRes.data : [];
+          rawAcademics = Array.isArray(academicsRes.data)
+            ? academicsRes.data
+            : [];
+
+          const marketCount = rawListings.filter(
+            (i) => normalizeCategory(i.category) === "marketplace",
+          ).length;
+          const serviceCount = rawListings.filter((i) =>
+            [
+              "printing",
+              "accommodation",
+              "service",
+              "expert",
+              "airtel_money",
+              "tnm_mpamba",
+              "repair",
+              "tailor",
+            ].includes(normalizeCategory(i.category)),
+          ).length;
+          const academicCount = rawAcademics.length;
+
+          document.getElementById("statTotal").textContent =
+            rawListings.length + academicCount;
+          document.getElementById("statMarket").textContent = marketCount;
+          document.getElementById("statAcademic").textContent = academicCount;
+          document.getElementById("statServices").textContent = serviceCount;
+
+          renderTable();
+        } catch (err) {
+          console.error("Dashboard fetch error:", err);
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2.5rem;">Unable to load dashboard data from Supabase.</td></tr>`;
+        } finally {
+          hideDashboardLoader();
+        }
+      }
+
+      function normalizeCategory(category) {
+        const c = String(category || "marketplace")
+          .toLowerCase()
+          .trim();
+        if (
+          ["marketplace", "printing", "accommodation", "academics"].includes(c)
+        )
+          return c;
+        if (
+          [
+            "airtel_money",
+            "tnm_mpamba",
+            "expert",
+            "service",
+            "repair",
+            "tailor",
+          ].includes(c)
+        )
+          return c;
+        return c;
+      }
+
+      function displayCategoryLabel(category) {
+        const c = normalizeCategory(category);
+        return (
+          {
+            marketplace: "Marketplace",
+            printing: "Printing",
+            accommodation: "Accommodation",
+            academics: "Academic Vault",
+            service: "Service",
+            expert: "Skills Expertise",
+            airtel_money: "Airtel Money Agent",
+            tnm_mpamba: "TNM Mpamba Agent",
+            repair: "Repair & Workshop",
+            tailor: "Tailor / Craft",
+          }[c] || String(category || "Marketplace")
+        );
+      }
+
+      function badgeClassForCategory(category) {
+        const c = normalizeCategory(category);
+        return (
+          {
+            marketplace: "badge-marketplace",
+            printing: "badge-printing",
+            accommodation: "badge-accommodation",
+            academics: "badge-academics",
+            service: "badge-services",
+            expert: "badge-skills",
+            airtel_money: "badge-agent-service",
+            tnm_mpamba: "badge-agent-service",
+            repair: "badge-repair",
+            tailor: "badge-tailor",
+          }[c] || "badge-marketplace"
+        );
+      }
+
+      function filterDashboard(type, btn) {
+        currentFilter = type;
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+        renderTable();
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById("listingsTableBody");
+        tbody.innerHTML = "";
+
+        let combinedItems = [];
+
+        rawListings.forEach((item) => {
+          combinedItems.push({
+            id: item.id,
+            posted_by: item.posted_by || item.user_name || "Anonymous Student",
+            category: normalizeCategory(item.category || "marketplace"),
+            title: item.title,
+            price_or_details: `${parseFloat(
+              item.price || 0,
+            ).toLocaleString()} MWK`,
+            contact: item.contact_number || item.phone || "N/A",
+            isAcademic: false,
+            raw: item,
+          });
+        });
+
+        rawAcademics.forEach((item) => {
+          combinedItems.push({
+            id: item.id,
+            posted_by:
+              item.uploaded_by || item.user_name || "Anonymous Student",
+            category: "academics",
+            title: `${item.title} ${
+              item.course_code ? "[" + item.course_code.toUpperCase() + "]" : ""
+            }`,
+            price_or_details: `${item.department} (${
+              item.academic_year || "Study Material"
+            })`,
+            contact: `📥 ${item.download_count || 0} Downloads`,
+            isAcademic: true,
+            raw: item,
+          });
+        });
+
+        if (currentFilter !== "all") {
+          combinedItems = combinedItems.filter(
+            (i) => i.category === currentFilter,
+          );
+        }
+
+        if (combinedItems.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2.5rem;">No active records found for this view category.</td></tr>`;
+          return;
+        }
+
+        combinedItems.forEach((item, index) => {
+          const tr = document.createElement("tr");
+          tr.className = "animated-card";
+          tr.style.animationDelay = `${index * 0.03}s`;
+
+          const badgeClass = badgeClassForCategory(item.category);
+          const actionCell = item.isAcademic
+            ? ""
+            : `<button class="action-btn btn-edit" onclick="openEditModal(${JSON.stringify(
+                item.raw,
+              )})">Edit</button>`;
+
+          tr.innerHTML = `
+                    <td><span class="uploader-tag">👤 ${escapeHTML(
+                      item.posted_by,
+                    )}</span></td>
+                    <td><span class="badge ${badgeClass}">${escapeHTML(
+            displayCategoryLabel(item.category),
+          )}</span></td>
+                    <td><strong>${escapeHTML(item.title)}</strong></td>
+                    <td>${escapeHTML(item.price_or_details)}</td>
+                    <td>${escapeHTML(item.contact)}</td>
+                    <td>
+                        ${actionCell}
+                        <button class="action-btn btn-delete" onclick="openDeleteModal(${
+                          item.id
+                        }, ${item.isAcademic})">Delete</button>
+                    </td>
+                `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function openDeleteModal(id, isAcademic) {
+        const backdrop =
+          document.getElementById("adminDeleteModalBackdrop") ||
+          createDeleteModal();
+        document.getElementById("deleteReminderId").value = id;
+        document.getElementById("deleteReminderAcademic").value = isAcademic
+          ? "true"
+          : "false";
+        backdrop.classList.add("active");
+      }
+
+      function createDeleteModal() {
+        const backdrop = document.createElement("div");
+        backdrop.id = "adminDeleteModalBackdrop";
+        backdrop.className = "admin-delete-modal-backdrop";
+        backdrop.innerHTML = `
+          <div class="admin-delete-modal-card">
+            <div class="admin-modal-head">
+              <h3>Delete Record</h3>
+              <button class="admin-close" type="button">×</button>
+            </div>
+            <div class="admin-form-field">
+              <p>Are you sure you want to remove this upload from the dashboard?</p>
+              <input type="hidden" id="deleteReminderId">
+              <input type="hidden" id="deleteReminderAcademic">
+            </div>
+            <div class="admin-form-actions">
+              <button type="button" class="admin-modal-cancel" id="cancelDelete">Cancel</button>
+              <button type="button" class="admin-modal-submit admin-danger" id="confirmDelete">Delete</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(backdrop);
+        backdrop
+          .querySelector(".admin-close")
+          .addEventListener("click", () => backdrop.classList.remove("active"));
+        backdrop
+          .querySelector("#cancelDelete")
+          .addEventListener("click", () => backdrop.classList.remove("active"));
+        backdrop
+          .querySelector("#confirmDelete")
+          .addEventListener("click", () => {
+            const id = Number(
+              document.getElementById("deleteReminderId").value,
+            );
+            const isAcademic =
+              document.getElementById("deleteReminderAcademic").value ===
+              "true";
+            deleteItem(id, isAcademic);
+            backdrop.classList.remove("active");
+          });
+        return backdrop;
+      }
+
+      async function deleteItem(id, isAcademic) {
+        try {
+          let result;
+          if (isAcademic) {
+            result = await window.db
+              .from("academic_resources")
+              .delete()
+              .eq("id", id);
+          } else {
+            result = await window.db.from("listings").delete().eq("id", id);
+          }
+
+          if (result.error) {
+            throw result.error;
+          }
+
+          showDashboardAlert("Record removed", "success");
+          loadAdminDashboard();
+        } catch (err) {
+          console.error("Delete request error:", err);
+          showDashboardAlert("Deletion failed through Supabase.", "error");
+        }
+      }
+
+      function openEditModal(item) {
+        const backdrop =
+          document.getElementById("adminEditModalBackdrop") ||
+          createEditModal();
+        const form = document.getElementById("adminEditForm");
+        const titleInput = document.getElementById("editTitleField");
+        const priceInput = document.getElementById("editPriceField");
+        const contactInput = document.getElementById("editContactField");
+        const categoryInput = document.getElementById("editCategoryField");
+        const hiddenType = document.getElementById("editTypeField");
+        const hiddenId = document.getElementById("editRecordId");
+
+        hiddenId.value = Number(item.id);
+        hiddenType.value = item.isAcademic ? "academic" : "listing";
+        titleInput.value = item.title || "";
+        priceInput.value = item.price || item.price_or_details || "";
+        contactInput.value =
+          item.contact || item.contact_number || item.phone || "";
+        categoryInput.value = item.category || "marketplace";
+
+        form.dataset.id = item.id;
+        backdrop.classList.add("active");
+      }
+
+      function createEditModal() {
+        const backdrop = document.createElement("div");
+        backdrop.id = "adminEditModalBackdrop";
+        backdrop.className = "admin-edit-modal-backdrop";
+        backdrop.innerHTML = `
+          <div class="admin-edit-modal-card">
+            <div class="admin-modal-head">
+              <h3>Edit Record</h3>
+              <button class="admin-close" type="button">×</button>
+            </div>
+            <form id="adminEditForm">
+              <input type="hidden" id="editTypeField">
+              <input type="hidden" id="editRecordId">
+              <div class="admin-form-field">
+                <label for="editTitleField">Title</label>
+                <input id="editTitleField" type="text">
+              </div>
+              <div class="admin-form-field">
+                <label for="editPriceField">Price / Details</label>
+                <input id="editPriceField" type="text">
+              </div>
+              <div class="admin-form-field">
+                <label for="editContactField">Contact</label>
+                <input id="editContactField" type="text">
+              </div>
+              <div class="admin-form-field">
+                <label for="editCategoryField">Category</label>
+                <select id="editCategoryField">
+                  <option value="marketplace">Marketplace</option>
+                  <option value="printing">Printing</option>
+                  <option value="accommodation">Accommodation</option>
+                  <option value="academics">Academic Vault</option>
+                  <option value="service">Service</option>
+                  <option value="expert">Skills Expertise</option>
+                  <option value="airtel_money">Airtel Money Agent</option>
+                  <option value="tnm_mpamba">TNM Mpamba Agent</option>
+                  <option value="repair">Repair & Workshop</option>
+                  <option value="tailor">Tailor / Craft</option>
+                </select>
+              </div>
+              <div class="admin-form-actions">
+                <button type="button" class="admin-modal-cancel" id="cancelEdit">Cancel</button>
+                <button type="submit" class="admin-modal-submit">Save Update</button>
+              </div>
+            </form>
+          </div>
+        `;
+        document.body.appendChild(backdrop);
+        backdrop
+          .querySelector(".admin-close")
+          .addEventListener("click", () => backdrop.classList.remove("active"));
+        backdrop
+          .querySelector("#cancelEdit")
+          .addEventListener("click", () => backdrop.classList.remove("active"));
+        const form = document.getElementById("adminEditForm");
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = Number(document.getElementById("editRecordId").value);
+          const type = document.getElementById("editTypeField").value;
+          const title = document.getElementById("editTitleField").value.trim();
+          const price = document.getElementById("editPriceField").value.trim();
+          const contact = document
+            .getElementById("editContactField")
+            .value.trim();
+          const category = document.getElementById("editCategoryField").value;
+          try {
+            if (type === "academic") {
+              const result = await window.db
+                .from("academic_resources")
+                .update({ title, department: price, download_count: contact })
+                .eq("id", id);
+              if (result.error) throw result.error;
+            } else {
+              const listingPayload = {
+                title,
+                price: parseFloat(price.replace(/[^0-9.]/g, "")) || 0,
+                contact_number: contact,
+                category,
+              };
+              const result = await window.db
+                .from("listings")
+                .update(listingPayload)
+                .eq("id", id);
+              if (result.error) throw result.error;
+            }
+            showDashboardAlert("Record updated", "success");
+            backdrop.classList.remove("active");
+            loadAdminDashboard();
+          } catch (err) {
+            console.error("Update request error:", err);
+            showDashboardAlert("Update failed through Supabase.", "error");
+          }
+        });
+        return backdrop;
+      }
+
+      function logout() {
+        sessionStorage.removeItem("isAdminLoggedIn");
+        sessionStorage.removeItem("adminUsername");
+        window.location.href = "app/home.html";
+      }
+
+      function escapeHTML(str) {
+        if (!str) return "";
+        return String(str).replace(
+          /[&<>\'\"]/g,
+          (tag) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;",
+            }[tag] || tag),
+        );
+      }
+    </script>
+  </body>
+</html>

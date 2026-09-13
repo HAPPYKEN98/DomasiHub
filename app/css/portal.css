@@ -229,3 +229,7 @@
   background: var(--bg-hover);
   color: var(--text-core);
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

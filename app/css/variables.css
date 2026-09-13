@@ -26,3 +26,7 @@ body.dark-theme {
   --input-fill: #1e293b;
   --glass-bg: rgba(9, 13, 22, 0.85);
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

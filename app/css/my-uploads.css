@@ -333,3 +333,7 @@
 .btn-danger:hover {
   background: #dc2626;
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

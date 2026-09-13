@@ -33,3 +33,7 @@
   border-top: 1px solid var(--border-subtle);
   margin: 1rem 0;
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

@@ -183,3 +183,7 @@ body.dark-theme .moon-icon {
 .notification-badge.hidden {
   display: none;
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

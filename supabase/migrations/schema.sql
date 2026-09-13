@@ -44,20 +44,6 @@ CREATE TABLE public.academic_resources (
   CONSTRAINT academic_resources_pkey PRIMARY KEY (id),
   CONSTRAINT academic_resources_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
-CREATE TABLE public.skill_services (
-  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-  user_id uuid DEFAULT auth.uid(),
-  provider_name text NOT NULL,
-  skill_category text NOT NULL,
-  service_title text NOT NULL,
-  description text,
-  starting_price numeric DEFAULT 0,
-  contact_number text NOT NULL,
-  portfolio_link text,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT skill_services_pkey PRIMARY KEY (id),
-  CONSTRAINT skill_services_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
 CREATE TABLE public.campus_landmarks (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   name text NOT NULL,

@@ -294,3 +294,7 @@
   width: 28px;
   height: 28px;
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

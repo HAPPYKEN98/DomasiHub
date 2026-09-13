@@ -186,3 +186,7 @@
 .tnm-card .whatsapp-contact-btn:hover {
   background: #f1f5f9;
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

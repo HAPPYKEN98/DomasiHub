@@ -119,3 +119,7 @@
   width: 22px;
   height: 22px;
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}

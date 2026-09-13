@@ -457,3 +457,7 @@ textarea:focus {
     border-radius: 12px;
   }
 }
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
