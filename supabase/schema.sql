@@ -298,3 +298,140 @@ create policy "hub_private_write"
 on storage.objects for insert
 to authenticated
 with check (bucket_id = 'hub-private' and (storage.foldername(name))[1] = auth.uid()::text);
+
+
+
+
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  full_name text NOT NULL DEFAULT ''::text,
+  reg_number text,
+  whatsapp_number text,
+  avatar_url text,
+  role text NOT NULL DEFAULT 'student'::text CHECK (role = ANY (ARRAY['student'::text, 'admin'::text])),
+  verified boolean NOT NULL DEFAULT false,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.listings (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  posted_by uuid NOT NULL,
+  title text NOT NULL,
+  category text NOT NULL,
+  price numeric,
+  contact_number text NOT NULL,
+  item_condition text,
+  location_details text,
+  description text,
+  image_url text,
+  status text NOT NULL DEFAULT 'active'::text CHECK (status = ANY (ARRAY['active'::text, 'sold'::text, 'hidden'::text])),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  image_urls ARRAY NOT NULL DEFAULT '{}'::text[],
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT listings_pkey PRIMARY KEY (id),
+  CONSTRAINT listings_posted_by_fkey FOREIGN KEY (posted_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.housing (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  posted_by uuid NOT NULL,
+  title text NOT NULL,
+  location_details text NOT NULL,
+  rent numeric,
+  utilities text,
+  security_notes text,
+  contact_number text NOT NULL,
+  description text,
+  image_url text,
+  available boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  image_urls ARRAY NOT NULL DEFAULT '{}'::text[],
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT housing_pkey PRIMARY KEY (id),
+  CONSTRAINT housing_posted_by_fkey FOREIGN KEY (posted_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.academic_resources (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  uploaded_by uuid NOT NULL,
+  title text NOT NULL,
+  department text NOT NULL,
+  academic_year text,
+  course_code text,
+  file_url text NOT NULL,
+  file_name text,
+  download_count integer NOT NULL DEFAULT 0,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  image_urls ARRAY NOT NULL DEFAULT '{}'::text[],
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT academic_resources_pkey PRIMARY KEY (id),
+  CONSTRAINT academic_resources_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.skill_services (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  provider_id uuid NOT NULL,
+  provider_name text NOT NULL,
+  skill_category text NOT NULL,
+  service_title text NOT NULL,
+  description text,
+  starting_price numeric DEFAULT 0,
+  contact_number text NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  image_urls ARRAY NOT NULL DEFAULT '{}'::text[],
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT skill_services_pkey PRIMARY KEY (id),
+  CONSTRAINT skill_services_provider_id_fkey FOREIGN KEY (provider_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.printing_providers (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  owner_id uuid NOT NULL,
+  name text NOT NULL,
+  location_details text,
+  contact_number text NOT NULL,
+  notes text,
+  available boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  image_urls ARRAY NOT NULL DEFAULT '{}'::text[],
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT printing_providers_pkey PRIMARY KEY (id),
+  CONSTRAINT printing_providers_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.print_jobs (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  submitted_by uuid NOT NULL,
+  provider_id uuid NOT NULL,
+  copies integer NOT NULL DEFAULT 1 CHECK (copies > 0),
+  notes text,
+  file_url text,
+  file_name text,
+  status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'ready'::text, 'done'::text, 'cancelled'::text])),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT print_jobs_pkey PRIMARY KEY (id),
+  CONSTRAINT print_jobs_submitted_by_fkey FOREIGN KEY (submitted_by) REFERENCES public.profiles(id),
+  CONSTRAINT print_jobs_provider_id_fkey FOREIGN KEY (provider_id) REFERENCES public.printing_providers(id)
+);
+CREATE TABLE public.bulletins (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  notice_type text NOT NULL DEFAULT 'general'::text,
+  title text NOT NULL,
+  description text NOT NULL,
+  posted_by uuid,
+  event_date date,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT bulletins_pkey PRIMARY KEY (id),
+  CONSTRAINT bulletins_posted_by_fkey FOREIGN KEY (posted_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.notifications (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  title text NOT NULL,
+  body text,
+  link text,
+  read_at timestamp with time zone,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT notifications_pkey PRIMARY KEY (id),
+  CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);

@@ -1,46 +1,17 @@
 <!doctype html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#635BFF" />
-    <meta
-      name="description"
-      content="Domasi Hub — independent digital student utility network."
-    />
-    <link rel="icon" href="assets/icons/favicon.svg" />
-    <title>Listing — Domasi Hub</title>
-    <link rel="stylesheet" href="css/theme.css" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link rel="manifest" href="manifest.json" />
-  </head>
-  <body>
-    <main class="main">
-
-    <a
-        class="back"
-        href="marketplace.html"
-    >
-        ← Marketplace
-    </a>
-
-
-    <div
-        id="listingDetail"
-    >
-        <div class="empty">
-            Loading listing...
-        </div>
-    </div>
-
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#635BFF"/><link rel="icon" href="assets/icons/favicon.svg"/>
+<title>Listing — Domasi Hub</title><link rel="stylesheet" href="css/theme.css"/><link rel="stylesheet" href="css/app.css"/><link rel="stylesheet" href="css/responsive.css"/><link rel="manifest" href="manifest.json"/>
+</head>
+<body>
+<div class="app"><main class="main">
+<a class="back" id="detailBack" href="home.html">← Back</a>
+<div id="listingDetail"><div class="empty">Loading listing...</div></div>
 </main>
-    <script type="module" src="js/app.js"></script>
-
-    <script type="module" src="js/marketplace-detail.js"></script>
-
-    <script type="module" src="js/pages.js"></script>
-  </body>
-</html>
+<nav class="bottom-nav">
+<a href="home.html"><img src="assets/icons/home.svg"/><span>Home</span></a><a href="marketplace.html"><img src="assets/icons/search.svg"/><span>Explore</span></a><a class="create" href="create.html"><img src="assets/icons/plus.svg"/><span class="sr-only">Create</span></a><a href="notifications.html"><img src="assets/icons/bell.svg"/><span>Alerts</span></a><a href="profile.html"><img src="assets/icons/profile.svg"/><span>Me</span></a>
+</nav></div>
+<script type="module" src="js/app.js"></script><script type="module" src="js/marketplace-detail.js"></script>
+</body></html>

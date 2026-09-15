@@ -10,8 +10,34 @@ const search = document.querySelector("#housingSearch");
 
 const availability = document.querySelector("#housingAvailability");
 
-function card(item) {
-  const image = item.image_urls?.[0];
+async function loadProfiles(ids) {
+  if (!ids.length) {
+    return new Map();
+  }
+
+  const { data, error } = await supabase
+    .from("public_profiles")
+    .select("id,full_name,avatar_url,verified")
+    .in("id", ids);
+
+  if (error) {
+    console.error(error);
+    return new Map();
+  }
+
+  return new Map((data || []).map((profile) => [profile.id, profile]));
+}
+
+function card(item, profile) {
+  const images = Array.isArray(item.image_urls)
+    ? item.image_urls
+    : item.image_url
+      ? [item.image_url]
+      : [];
+
+  const image = images[0];
+
+  const seller = profile?.full_name || "Domasi student";
 
   const wa = waLink(
     item.contact_number,
@@ -19,120 +45,115 @@ function card(item) {
   );
 
   return `
-        <article class="card">
+    <article class="card listing-card">
 
-            ${
-              image
-                ? `
-                        <div class="card-media">
-                            <img
-                                src="${escapeHTML(image)}"
-                                alt="${escapeHTML(item.title)}"
-                            >
-                        </div>
-                    `
-                : ""
-            }
+      ${
+        image
+          ? `
+            <a class="card-media" href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}" aria-label="View ${escapeHTML(item.title)}">
+              <img src="${escapeHTML(image)}" alt="${escapeHTML(item.title)}" loading="lazy">
+            </a>
+          `
+          : `
+            <a class="card-media card-media-empty" href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}" aria-label="View ${escapeHTML(item.title)}"><span>No photo</span></a>
+          `
+      }
 
+      <div class="card-content">
 
-            <div class="card-content">
+        <div class="row">
 
-                <div class="row">
+          <span class="chip">
+            ${item.available ? "Available" : "Unavailable"}
+          </span>
 
-                    <span class="chip">
-                        ${item.available ? "Available" : "Unavailable"}
-                    </span>
+          <span class="price">
+            ${money(item.rent)}
+            <small>/ month</small>
+          </span>
 
-                    <span class="price">
-                        ${money(item.rent)}
-                        <small>/ month</small>
-                    </span>
+        </div>
 
-                </div>
+        <h3><a href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}">${escapeHTML(item.title || "Accommodation")}</a></h3>
 
+        ${
+          item.location_details
+            ? `
+              <p class="detail-line">
+                ${escapeHTML(item.location_details)}
+              </p>
+            `
+            : ""
+        }
 
-                <h3>
-                    ${escapeHTML(item.title)}
-                </h3>
+        ${
+          item.utilities
+            ? `
+              <p class="detail-line">
+                Utilities:
+                ${escapeHTML(item.utilities)}
+              </p>
+            `
+            : ""
+        }
 
+        ${
+          item.security_notes
+            ? `
+              <p class="detail-line">
+                Security:
+                ${escapeHTML(item.security_notes)}
+              </p>
+            `
+            : ""
+        }
 
-                <p class="muted">
-                    ${escapeHTML(item.location_details)}
-                </p>
+        ${
+          item.description
+            ? `
+              <p class="description listing-description">
+                ${escapeHTML(item.description)}
+              </p>
+            `
+            : ""
+        }
 
+        <div class="uploader">
 
-                ${
-                  item.utilities
-                    ? `
-                            <p class="detail-line">
-                                ${escapeHTML(item.utilities)}
-                            </p>
-                        `
-                    : ""
-                }
+          <span class="avatar">
+            ${escapeHTML(seller.charAt(0).toUpperCase())}
+          </span>
 
+          <span>
+            Listed by
+            <strong>
+              ${escapeHTML(seller)}
+            </strong>
+          </span>
 
-                ${
-                  item.security_notes
-                    ? `
-                            <p class="detail-line">
-                                ${escapeHTML(item.security_notes)}
-                            </p>
-                        `
-                    : ""
-                }
+        </div>
 
+        <a class="btn btn-secondary" href="marketplace-detail.html?type=housing&id=${encodeURIComponent(item.id)}">View accommodation</a>
 
-                ${
-                  item.description
-                    ? `
-                            <p class="description">
-                                ${escapeHTML(item.description)}
-                            </p>
-                        `
-                    : ""
-                }
+        ${
+          wa
+            ? `
+              <a
+                class="btn btn-primary"
+                href="${escapeHTML(wa)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contact on WhatsApp
+              </a>
+            `
+            : ""
+        }
 
+      </div>
 
-                <div class="uploader">
-
-                    <span class="avatar">
-                        ${escapeHTML(
-                          (item.profiles?.full_name || "Student")
-                            .charAt(0)
-                            .toUpperCase(),
-                        )}
-                    </span>
-
-                    <span>
-                        Listed by
-                        <strong>
-                            ${escapeHTML(item.profiles?.full_name || "Student")}
-                        </strong>
-                    </span>
-
-                </div>
-
-
-                ${
-                  wa
-                    ? `
-                            <a
-                                class="btn btn-primary"
-                                href="${escapeHTML(wa)}"
-                                target="_blank"
-                                rel="noopener"
-                            >
-                                Contact on WhatsApp
-                            </a>
-                        `
-                    : ""
-                }
-
-            </div>
-
-        </article>
-    `;
+    </article>
+  `;
 }
 
 async function load() {
@@ -140,14 +161,7 @@ async function load() {
 
   let query = supabase
     .from("housing")
-    .select(
-      `
-                *,
-                profiles:posted_by (
-                    full_name
-                )
-            `,
-    )
+    .select("*")
     .order("created_at", {
       ascending: false,
     })
@@ -160,11 +174,16 @@ async function load() {
 
   if (term) {
     query = query.or(
-      `title.ilike.%${term}%,location_details.ilike.%${term}%,utilities.ilike.%${term}%,description.ilike.%${term}%`,
+      [
+        `title.ilike.%${term}%`,
+        `location_details.ilike.%${term}%`,
+        `utilities.ilike.%${term}%`,
+        `description.ilike.%${term}%`,
+      ].join(","),
     );
   }
 
-  if (availability?.value) {
+  if (availability?.value === "true") {
     query = query.eq("available", true);
   }
 
@@ -173,7 +192,7 @@ async function load() {
   if (error) {
     console.error(error);
 
-    status.textContent = "Unable to load accommodation right now.";
+    status.textContent = "Unable to load accommodation.";
 
     grid.innerHTML = "";
 
@@ -184,19 +203,28 @@ async function load() {
     status.textContent = "No accommodation found.";
 
     grid.innerHTML = `
-            <div class="empty">
-                No accommodation listings match your search.
-            </div>
-        `;
+      <div class="empty">
+        <strong>No accommodation found</strong>
+        <p>
+          Try changing your search or check back later.
+        </p>
+      </div>
+    `;
 
     return;
   }
+
+  const ids = [...new Set(data.map((item) => item.posted_by).filter(Boolean))];
+
+  const profiles = await loadProfiles(ids);
 
   status.textContent = `${data.length} accommodation listing${
     data.length === 1 ? "" : "s"
   }`;
 
-  grid.innerHTML = data.map(card).join("");
+  grid.innerHTML = data
+    .map((item) => card(item, profiles.get(item.posted_by)))
+    .join("");
 }
 
 search?.addEventListener("input", () => {
@@ -206,5 +234,7 @@ search?.addEventListener("input", () => {
 });
 
 availability?.addEventListener("change", load);
+
+document.querySelector(`[data-focus-search="housingSearch"]`)?.addEventListener("click", () => { search?.dispatchEvent(new Event("input", {bubbles:true})); });
 
 load();
